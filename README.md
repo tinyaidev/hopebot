@@ -1,0 +1,3 @@
+# HopeBot
+
+Hello, world!
