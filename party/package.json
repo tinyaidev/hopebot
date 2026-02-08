@@ -1,0 +1,16 @@
+{
+  "name": "hopebot-party",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx partykit dev",
+    "deploy": "npx partykit deploy"
+  },
+  "dependencies": {
+    "partykit": "^0.0.111",
+    "partysocket": "^1.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

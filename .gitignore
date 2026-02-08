@@ -48,3 +48,10 @@ __pycache__/
 *.pyc
 .cache/
 .parcel-cache/
+
+# Next.js
+.next/
+.vercel/
+
+# PartyKit
+.partykit/

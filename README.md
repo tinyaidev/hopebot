@@ -1,3 +1,3 @@
-# HopeBot
+# hopebot
 
 Hello, world!
