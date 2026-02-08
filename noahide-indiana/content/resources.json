@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Ask Noah International",
+    "category": "teaching",
+    "description": "The go-to resource for encyclopedic information on the Seven Noahide Laws, including books, classes, and community guidance.",
+    "link": "https://asknoah.org"
+  },
+  {
+    "name": "Chabad of Indiana",
+    "category": "rabbi",
+    "description": "Chabad-Lubavitch centers across Indiana offering Torah classes, holiday celebrations, and warm hospitality for all.",
+    "link": "https://www.chabadindiana.com"
+  },
+  {
+    "name": "Noahide Academy",
+    "category": "teaching",
+    "description": "Structured online courses on the Noahide Laws, Jewish philosophy, and Hebrew language for Noahides worldwide.",
+    "link": "https://noahideacademy.org"
+  },
+  {
+    "name": "The Torah Path for Noahides",
+    "category": "teaching",
+    "description": "Video lectures and written guides covering all aspects of the Noahide path, from daily practice to philosophical depth.",
+    "link": "https://noahidepath.org"
+  },
+  {
+    "name": "Indianapolis Hebrew Congregation",
+    "category": "community",
+    "description": "One of Indiana's oldest congregations, welcoming to those exploring the Noahide path. Classes and community events open to all.",
+    "link": "https://www.ihcindy.org"
+  },
+  {
+    "name": "Noahide Nations",
+    "category": "community",
+    "description": "A global Noahide community offering online classes, conferences, and connection with rabbinical teachers and fellow Noahides.",
+    "link": "https://noahidenations.com"
+  }
+]
