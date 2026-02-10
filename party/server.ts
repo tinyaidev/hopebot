@@ -49,7 +49,7 @@ export default class TerminalRelay implements Server {
     // Validate auth token for local client
     if (type === "local") {
       const token = url.searchParams.get("token");
-      const expectedToken = this.room.env.PARTY_AUTH_TOKEN as string;
+      const expectedToken = (this.room.env.PARTY_AUTH_TOKEN as string)?.trim();
       if (!token || token !== expectedToken) {
         conn.close(4001, "Invalid auth token");
         return;
