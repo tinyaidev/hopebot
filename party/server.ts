@@ -32,6 +32,8 @@ function error(msg: string, status = 401): Response {
 export default class TerminalRelay implements Server {
   readonly room: Party;
   private connectionTypes = new Map<string, ConnectionType>();
+  /** Maps browserSessionId → connection id for dedup */
+  private browserSessions = new Map<string, string>();
 
   constructor(room: Party) {
     this.room = room;
@@ -60,6 +62,17 @@ export default class TerminalRelay implements Server {
     // after connecting to prove their identity
     if (type === "browser") {
       conn.setState({ user: null });
+
+      // Close stale connection with the same browserSessionId
+      const sessionId = url.searchParams.get("browserSessionId");
+      if (sessionId) {
+        const staleId = this.browserSessions.get(sessionId);
+        if (staleId && staleId !== conn.id) {
+          const stale = this.room.getConnection(staleId);
+          if (stale) stale.close(4002, "Replaced by new connection");
+        }
+        this.browserSessions.set(sessionId, conn.id);
+      }
     }
 
     this.connectionTypes.set(conn.id, type);
@@ -157,6 +170,14 @@ export default class TerminalRelay implements Server {
   onClose(conn: Connection) {
     const type = this.connectionTypes.get(conn.id);
     this.connectionTypes.delete(conn.id);
+
+    // Clean up browserSessionId mapping
+    for (const [sessionId, connId] of this.browserSessions) {
+      if (connId === conn.id) {
+        this.browserSessions.delete(sessionId);
+        break;
+      }
+    }
 
     // Notify browsers when local client disconnects
     if (type === "local" && !this.hasConnectionOfType("local")) {

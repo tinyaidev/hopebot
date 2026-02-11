@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Terminal as XTerm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { WebglAddon } from "@xterm/addon-webgl";
@@ -14,15 +14,41 @@ async function identify(socket: PartySocket) {
   }
 }
 
+const SPECIAL_KEYS = [
+  { label: "Esc", seq: "\x1b" },
+  { label: "Tab", seq: "\t" },
+  { label: "↑", seq: "\x1b[A" },
+  { label: "↓", seq: "\x1b[B" },
+  { label: "←", seq: "\x1b[D" },
+  { label: "→", seq: "\x1b[C" },
+] as const;
+
 export default function Terminal() {
   const termRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<XTerm | null>(null);
   const wsRef = useRef<PartySocket | null>(null);
   const fitAddonRef = useRef<FitAddon | null>(null);
   const [status, setStatus] = useState<"connecting" | "connected" | "disconnected">("connecting");
+  const [ctrlHeld, setCtrlHeld] = useState(false);
+  const ctrlHeldRef = useRef(false);
+
+  // Keep ref in sync so onData callback sees current value
+  useEffect(() => {
+    ctrlHeldRef.current = ctrlHeld;
+  }, [ctrlHeld]);
+
+  const sendInput = useCallback((data: string) => {
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: "terminal_input", payload: data }));
+    }
+  }, []);
 
   useEffect(() => {
     if (!termRef.current) return;
+
+    // Stable session ID for dedup across reconnects
+    const browserSessionId = crypto.randomUUID();
 
     const term = new XTerm({
       cursorBlink: true,
@@ -67,6 +93,7 @@ export default function Terminal() {
       room: "hopebot",
       query: {
         type: "browser",
+        browserSessionId,
       },
     });
 
@@ -114,11 +141,19 @@ export default function Terminal() {
       setStatus("connecting");
     });
 
-    // Terminal input → WebSocket
+    // Terminal input → WebSocket (with Ctrl modifier support)
     const onDataDisposable = term.onData((data) => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "terminal_input", payload: data }));
+      if (ws.readyState !== WebSocket.OPEN) return;
+      let payload = data;
+      if (ctrlHeldRef.current && data.length === 1) {
+        const code = data.toUpperCase().charCodeAt(0);
+        // Ctrl+A=1 .. Ctrl+Z=26
+        if (code >= 65 && code <= 90) {
+          payload = String.fromCharCode(code - 64);
+        }
+        setCtrlHeld(false);
       }
+      ws.send(JSON.stringify({ type: "terminal_input", payload }));
     });
 
     // Terminal resize → WebSocket
@@ -132,18 +167,33 @@ export default function Terminal() {
     const handleResize = () => fitAddon.fit();
     window.addEventListener("resize", handleResize);
 
+    // Reconnect when tab becomes visible again
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        ws.reconnect();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     return () => {
       onDataDisposable.dispose();
       onResizeDisposable.dispose();
       window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibility);
       ws.close();
       term.dispose();
     };
   }, []);
 
+  const handleSpecialKey = useCallback((seq: string) => {
+    sendInput(seq);
+    // Focus terminal after button press
+    xtermRef.current?.focus();
+  }, [sendInput]);
+
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="flex items-center justify-between px-4 py-2 bg-[#161b22] border-b border-gray-700">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#161b22] border-b border-gray-700 flex-shrink-0">
         <span className="text-sm font-medium text-gray-300">hopebot</span>
         <div className="flex items-center gap-2">
           <span
@@ -164,7 +214,34 @@ export default function Terminal() {
           </span>
         </div>
       </div>
-      <div ref={termRef} className="flex-1" />
+      {/* Special keys toolbar */}
+      <div className="flex items-center gap-1.5 px-2 py-1.5 bg-[#161b22] border-b border-gray-700 flex-shrink-0">
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            setCtrlHeld((v) => !v);
+            xtermRef.current?.focus();
+          }}
+          className={`px-2.5 py-1 text-xs rounded font-mono transition-colors ${
+            ctrlHeld
+              ? "bg-blue-600 text-white ring-1 ring-blue-400"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+          }`}
+        >
+          Ctrl
+        </button>
+        {SPECIAL_KEYS.map(({ label, seq }) => (
+          <button
+            key={label}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => handleSpecialKey(seq)}
+            className="px-2.5 py-1 text-xs rounded font-mono bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors"
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <div ref={termRef} className="flex-1 min-h-0 overflow-hidden" />
     </div>
   );
 }
