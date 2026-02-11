@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx partykit dev",
-    "deploy": "npx partykit deploy"
+    "deploy": "npx partykit deploy --with-vars"
   },
   "dependencies": {
     "partykit": "^0.0.111",
