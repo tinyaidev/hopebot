@@ -18,6 +18,9 @@
 - Tailwind CSS for styling
 - Prefers concise, direct implementations
 
+## Projects Built
+- **dungeon-lumina/** — family-friendly 8-bit dungeon crawler, Next.js 15 + TypeScript + Tailwind v4, canvas-based rendering, 5 floors, 14 spells, discoverable storyline, turn-based combat
+
 ## Notes
 - PartyKit room ID: "hopebot"
 - Message protocol: terminal_input, terminal_output, resize, status
