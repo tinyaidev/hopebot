@@ -8,6 +8,10 @@ import type { ArbitrageOpportunity, Strategy } from './types.js';
 async function main() {
   console.log('=== BTC Options Arbitrage: Polymarket vs Deribit ===\n');
   console.log('Target: $1-5K total across both legs | Deribit in 0.1 BTC chunks\n');
+  console.log('⚠️  WARNING: Profits shown are BEFORE brokerage fees. Fees typically exceed any "TRUE ARB" profit found:');
+  console.log('   • Polymarket: ~2% taker fee on CLOB  →  ~$58–60 on a $3K position');
+  console.log('   • Deribit:    ~0.03% of underlying per leg  →  ~$58 for 2-leg spread on 1.5 BTC');
+  console.log('   • Total fees: ~$116–120 per strategy  (wipes out all current TRUE ARB opportunities)\n');
 
   // 1. Fetch Polymarket binary options
   const polymarkets = await fetchPolymarketBinaries();
