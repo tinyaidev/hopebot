@@ -52,6 +52,47 @@ describe('jwt.create', () => {
     expect(result.ok).toBe(true);
   });
 
+  it('returns 400 when exp is in claims (would crash jwt.sign)', () => {
+    const { id, private_key } = identityService.create('JwtBot');
+    const sig = signIdentityId(id, private_key);
+    const result = jwtService.create(id, sig, { exp: 99999999 }, '1h');
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.status).toBe(400);
+      expect(result.error).toMatch(/reserved/i);
+    }
+  });
+
+  it('returns 400 when nbf is in claims (would crash jwt.sign)', () => {
+    const { id, private_key } = identityService.create('JwtBot');
+    const sig = signIdentityId(id, private_key);
+    const result = jwtService.create(id, sig, { nbf: 0 }, '1h');
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.status).toBe(400);
+  });
+
+  it('sub in claims is silently overridden — token sub is always the real identity id', () => {
+    const { id, private_key } = identityService.create('JwtBot');
+    const sig = signIdentityId(id, private_key);
+    const result = jwtService.create(id, sig, { sub: 'evil-identity' }, '1h');
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const verified = jwtService.verify(result.token);
+    expect(verified.ok).toBe(true);
+    if (verified.ok) expect(verified.claims.sub).toBe(id);
+  });
+
+  it('iss in claims is stripped — token iss is always botdentity', () => {
+    const { id, private_key } = identityService.create('JwtBot');
+    const sig = signIdentityId(id, private_key);
+    const result = jwtService.create(id, sig, { iss: 'evil-issuer' }, '1h');
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const verified = jwtService.verify(result.token);
+    expect(verified.ok).toBe(true);
+    if (verified.ok) expect(verified.claims.iss).toBe('botdentity');
+  });
+
   it('preserves extra claims', () => {
     const { id, private_key } = identityService.create('JwtBot');
     const sig = signIdentityId(id, private_key);

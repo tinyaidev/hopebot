@@ -30,7 +30,7 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
       data: Buffer,
       contentType: string,
       filename: string | null,
-    ): BlobRow & { action: 'created' | 'updated' } {
+    ): Result<BlobRow & { action: 'created' | 'updated' }> {
       const size = data.length;
       const now = new Date().toISOString();
       const existing = db.prepare('SELECT * FROM blobs WHERE id = ?').get(id) as
@@ -38,6 +38,9 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
         | undefined;
 
       if (existing) {
+        if (existing.identity_id !== identityId) {
+          return { ok: false, error: 'Forbidden', status: 403 };
+        }
         const lastTx = existing.last_transaction_at ?? existing.created_at;
         const durationSeconds = Math.floor(
           (new Date(now).getTime() - new Date(lastTx).getTime()) / 1000,
@@ -58,7 +61,7 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
       fs.writeFileSync(filePath(id), data);
 
       const updated = db.prepare('SELECT * FROM blobs WHERE id = ?').get(id) as BlobRow;
-      return { ...updated, action: existing ? 'updated' : 'created' };
+      return { ok: true, ...updated, action: existing ? 'updated' : 'created' };
     },
 
     getById(id: string): { blob: BlobRow; data: Buffer } | undefined {

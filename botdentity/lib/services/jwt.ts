@@ -13,6 +13,11 @@ const VALIDITY_MAP: Record<string, string> = {
   '30d': '30d',
 };
 
+// Claims that would cause jwt.sign to throw when also set via options.
+const CRASH_CLAIMS = new Set(['exp', 'nbf']);
+// Claims that jwt options set authoritatively — strip from user payload to avoid confusion.
+const STRIP_CLAIMS = new Set(['iat', 'iss', 'jti', 'aud']);
+
 export function createJwtService(db: DatabaseSync) {
   function secret(): string {
     return getOrCreateServerSecret(db);
@@ -45,8 +50,21 @@ export function createJwtService(db: DatabaseSync) {
         return { ok: false, error: 'Invalid signature', status: 401 };
       }
 
+      const crashFound = Object.keys(claims).filter((k) => CRASH_CLAIMS.has(k));
+      if (crashFound.length > 0) {
+        return {
+          ok: false,
+          error: `Reserved JWT claims not allowed in custom claims: ${crashFound.join(', ')}`,
+          status: 400,
+        };
+      }
+
+      const safeClaims = Object.fromEntries(
+        Object.entries(claims).filter(([k]) => !STRIP_CLAIMS.has(k)),
+      );
+
       const expiresIn = VALIDITY_MAP[validity];
-      const token = jwt.sign({ ...claims, sub: identityId }, secret(), {
+      const token = jwt.sign({ ...safeClaims, sub: identityId }, secret(), {
         expiresIn: expiresIn as jwt.SignOptions['expiresIn'],
         issuer: 'botdentity',
       });

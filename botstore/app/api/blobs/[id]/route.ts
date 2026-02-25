@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { blobService } from '@/lib/container';
 import { verifyJwt, extractBearer } from '@/lib/auth';
+import { isValidBlobId, isValidContentType, sanitizeFilename } from '@/lib/validation';
 
 // ── GET /api/blobs/:id — download ────────────────────────────────────────────
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+
+  if (!isValidBlobId(id)) {
+    return NextResponse.json({ error: 'Invalid blob id' }, { status: 400 });
+  }
 
   const token = extractBearer(req.headers.get('authorization'));
   if (!token) {
@@ -40,6 +45,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
+  if (!isValidBlobId(id)) {
+    return NextResponse.json({ error: 'Invalid blob id' }, { status: 400 });
+  }
+
   const token = extractBearer(req.headers.get('authorization'));
   if (!token) {
     return NextResponse.json({ error: 'Authorization: Bearer <token> required' }, { status: 401 });
@@ -52,18 +61,36 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const identityId = auth.claims.sub;
   const contentType = req.headers.get('content-type') ?? 'application/octet-stream';
-  const filename = req.headers.get('x-filename') ?? null;
+
+  if (!isValidContentType(contentType)) {
+    return NextResponse.json(
+      { error: `Content-Type '${contentType.split(';')[0].trim()}' is not allowed` },
+      { status: 400 },
+    );
+  }
+
+  const rawFilename = req.headers.get('x-filename');
+  const filename = rawFilename ? sanitizeFilename(rawFilename) || null : null;
 
   const buffer = Buffer.from(await req.arrayBuffer());
   const result = blobService.upsert(id, identityId, buffer, contentType, filename);
 
-  return NextResponse.json(result);
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+
+  const { ok: _, ...blobData } = result;
+  return NextResponse.json(blobData);
 }
 
 // ── DELETE /api/blobs/:id ─────────────────────────────────────────────────────
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+
+  if (!isValidBlobId(id)) {
+    return NextResponse.json({ error: 'Invalid blob id' }, { status: 400 });
+  }
 
   const token = extractBearer(req.headers.get('authorization'));
   if (!token) {

@@ -17,6 +17,8 @@ describe('blobService.upsert', () => {
   it('creates a new blob and writes file', () => {
     const data = Buffer.from('hello world');
     const result = blobService.upsert('blob-1', 'identity-1', data, 'text/plain', 'hello.txt');
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
     expect(result.action).toBe('created');
     expect(result.id).toBe('blob-1');
     expect(result.size).toBe(11);
@@ -27,9 +29,23 @@ describe('blobService.upsert', () => {
   it('update creates a transaction record and updates metadata', () => {
     blobService.upsert('blob-1', 'identity-1', Buffer.from('v1'), 'text/plain', null);
     const result = blobService.upsert('blob-1', 'identity-1', Buffer.from('version 2'), 'text/plain', 'v2.txt');
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
     expect(result.action).toBe('updated');
     expect(result.size).toBe(9);
     expect(result.filename).toBe('v2.txt');
+  });
+
+  it('returns 403 when a different identity tries to overwrite an existing blob', () => {
+    blobService.upsert('blob-owned', 'identity-1', Buffer.from('original'), 'text/plain', null);
+    const result = blobService.upsert('blob-owned', 'identity-2', Buffer.from('evil'), 'text/plain', null);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(403);
+    expect(result.error).toMatch(/forbidden/i);
+    // Original file must be intact
+    const stored = blobService.getById('blob-owned');
+    expect(stored?.data.toString()).toBe('original');
   });
 });
 
