@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/lib/db';
-import { verifySignature, createToken } from '@/lib/crypto';
+import { jwtService } from '@/lib/container';
 
 export async function POST(req: NextRequest) {
   let body: {
@@ -21,27 +20,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'identity_id and signature are required' }, { status: 400 });
   }
 
-  const validities = ['1h', '24h', '7d', '30d'];
-  if (!validities.includes(validity)) {
-    return NextResponse.json(
-      { error: `validity must be one of: ${validities.join(', ')}` },
-      { status: 400 },
-    );
+  const result = jwtService.create(identity_id, signature, claims, validity);
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
   }
 
-  const identity = db
-    .prepare('SELECT id, public_key FROM identities WHERE id = ?')
-    .get(identity_id) as { id: string; public_key: string } | undefined;
-
-  if (!identity) {
-    return NextResponse.json({ error: 'Identity not found' }, { status: 404 });
-  }
-
-  if (!verifySignature(identity_id, signature, identity.public_key)) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-  }
-
-  const { token, expiresAt } = createToken(identity_id, claims, validity);
-
-  return NextResponse.json({ token, expires_at: expiresAt });
+  return NextResponse.json({ token: result.token, expires_at: result.expiresAt });
 }

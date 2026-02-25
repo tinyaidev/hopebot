@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import db from '@/lib/db';
-import { generateKeypair } from '@/lib/crypto';
+import { identityService } from '@/lib/container';
 
 export async function POST(req: NextRequest) {
   let body: { name?: string };
@@ -16,21 +14,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'name is required' }, { status: 400 });
   }
 
-  const id = uuidv4();
-  const { publicKey, privateKey } = generateKeypair();
-  const createdAt = new Date().toISOString();
-
-  db.prepare(
-    'INSERT INTO identities (id, name, public_key, credits, created_at) VALUES (?, ?, ?, 0, ?)',
-  ).run(id, name.trim(), publicKey, createdAt);
+  const result = identityService.create(name.trim());
 
   return NextResponse.json({
-    id,
-    name: name.trim(),
-    public_key: publicKey,
-    private_key: privateKey,
-    credits: 0,
-    created_at: createdAt,
+    ...result,
     note: 'The private_key is shown only once and never stored. Save it securely.',
   });
 }

@@ -1,25 +1,17 @@
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
-import db from './db';
+import { DatabaseSync } from 'node:sqlite';
 
 // ── Server signing secret ─────────────────────────────────────────────────────
 
-let _secret: string | null = null;
-
-export function getServerSecret(): string {
-  if (_secret) return _secret;
+export function getOrCreateServerSecret(db: DatabaseSync): string {
   const row = db.prepare('SELECT secret FROM server_config WHERE id = ?').get('main') as
     | { secret: string }
     | undefined;
-  if (row) {
-    _secret = row.secret;
-    return _secret;
-  }
+  if (row) return row.secret;
   const secret = crypto.randomBytes(64).toString('base64');
   db
     .prepare('INSERT INTO server_config (id, secret, created_at) VALUES (?, ?, ?)')
     .run('main', secret, new Date().toISOString());
-  _secret = secret;
   return secret;
 }
 
@@ -55,39 +47,5 @@ export function verifySignature(
     );
   } catch {
     return false;
-  }
-}
-
-// ── JWT ───────────────────────────────────────────────────────────────────────
-
-const VALIDITY_MAP: Record<string, string> = {
-  '1h': '1h',
-  '24h': '24h',
-  '7d': '7d',
-  '30d': '30d',
-};
-
-export function createToken(
-  identityId: string,
-  claims: Record<string, unknown>,
-  validity: string = '24h',
-): { token: string; expiresAt: string } {
-  const expiresIn = VALIDITY_MAP[validity] ?? '24h';
-  const secret = getServerSecret();
-  const token = jwt.sign({ ...claims, sub: identityId }, secret, {
-    expiresIn: expiresIn as jwt.SignOptions['expiresIn'],
-    issuer: 'botdentity',
-  });
-  const decoded = jwt.decode(token) as { exp: number };
-  return { token, expiresAt: new Date(decoded.exp * 1000).toISOString() };
-}
-
-export function verifyToken(token: string): { valid: true; claims: jwt.JwtPayload } | { valid: false; error: string } {
-  try {
-    const secret = getServerSecret();
-    const claims = jwt.verify(token, secret, { issuer: 'botdentity' }) as jwt.JwtPayload;
-    return { valid: true, claims };
-  } catch (err) {
-    return { valid: false, error: (err as Error).message };
   }
 }
