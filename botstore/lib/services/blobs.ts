@@ -2,6 +2,7 @@ import { DatabaseSync } from 'node:sqlite';
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { log } from '../logger';
 
 export interface BlobRow {
   id: string;
@@ -39,6 +40,7 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
 
       if (existing) {
         if (existing.identity_id !== identityId) {
+          log('blob.ownership_violation', { blobId: id, ownerId: existing.identity_id, requesterId: identityId });
           return { ok: false, error: 'Forbidden', status: 403 };
         }
         const lastTx = existing.last_transaction_at ?? existing.created_at;
@@ -60,7 +62,7 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
       if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
       fs.writeFileSync(filePath(id), data);
 
-      const updated = db.prepare('SELECT * FROM blobs WHERE id = ?').get(id) as BlobRow;
+      const updated = db.prepare('SELECT * FROM blobs WHERE id = ?').get(id) as unknown as BlobRow;
       return { ok: true, ...updated, action: existing ? 'updated' : 'created' };
     },
 
@@ -78,7 +80,7 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
           `SELECT id, identity_id, filename, content_type, size, created_at, updated_at, last_transaction_at
            FROM blobs WHERE identity_id = ? ORDER BY updated_at DESC`,
         )
-        .all(identityId) as BlobRow[];
+        .all(identityId) as unknown as BlobRow[];
     },
 
     deleteById(
@@ -87,7 +89,10 @@ export function createBlobService(db: DatabaseSync, uploadsDir: string) {
     ): { ok: true } | { ok: false; error: string; status: number } {
       const blob = db.prepare('SELECT * FROM blobs WHERE id = ?').get(id) as BlobRow | undefined;
       if (!blob) return { ok: false, error: 'Blob not found', status: 404 };
-      if (blob.identity_id !== identityId) return { ok: false, error: 'Forbidden', status: 403 };
+      if (blob.identity_id !== identityId) {
+        log('blob.ownership_violation', { blobId: id, ownerId: blob.identity_id, requesterId: identityId });
+        return { ok: false, error: 'Forbidden', status: 403 };
+      }
       const fp = filePath(id);
       if (fs.existsSync(fp)) fs.unlinkSync(fp);
       db.prepare('DELETE FROM blobs WHERE id = ?').run(id);

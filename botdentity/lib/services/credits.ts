@@ -4,12 +4,14 @@ import { verifySignature } from '../crypto';
 import type { Result } from './jwt';
 
 const CREDITS_PER_PURCHASE = 1000;
+const TIMESTAMP_WINDOW_MS = 60_000;
 
 export function createCreditsService(db: DatabaseSync) {
   return {
     buy(
       identityId: string,
       signature: string,
+      timestamp: number,
       slug: string,
     ): Result<{
       transactionId: string;
@@ -18,6 +20,10 @@ export function createCreditsService(db: DatabaseSync) {
       slug: string;
       createdAt: string;
     }> {
+      if (Math.abs(Date.now() - timestamp) > TIMESTAMP_WINDOW_MS) {
+        return { ok: false, error: 'Request timestamp expired', status: 401 };
+      }
+
       const identity = db
         .prepare('SELECT id, public_key, credits FROM identities WHERE id = ?')
         .get(identityId) as { id: string; public_key: string; credits: number } | undefined;
@@ -26,7 +32,8 @@ export function createCreditsService(db: DatabaseSync) {
         return { ok: false, error: 'Identity not found', status: 404 };
       }
 
-      if (!verifySignature(identityId, signature, identity.public_key)) {
+      const message = `${identityId}:${String(timestamp)}`;
+      if (!verifySignature(message, signature, identity.public_key)) {
         return { ok: false, error: 'Invalid signature', status: 401 };
       }
 

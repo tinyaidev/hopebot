@@ -4,6 +4,7 @@ vi.mock('@/lib/container', () => ({
   jwtService: {
     create: vi.fn(),
     verify: vi.fn(),
+    revoke: vi.fn(),
   },
 }));
 
@@ -37,9 +38,16 @@ describe('POST /api/jwt', () => {
     expect(res.status).toBe(400);
   });
 
+  it('returns 400 when timestamp is missing', async () => {
+    const res = await POST(makeRequest({ identity_id: 'x', signature: 'y' }) as any);
+    expect(res.status).toBe(400);
+  });
+
   it('propagates service error status', async () => {
     mockCreate.mockReturnValue({ ok: false, error: 'Identity not found', status: 404 });
-    const res = await POST(makeRequest({ identity_id: 'x', signature: 'y' }) as any);
+    const res = await POST(
+      makeRequest({ identity_id: 'x', signature: 'y', timestamp: Date.now() }) as any,
+    );
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error).toBe('Identity not found');
@@ -47,11 +55,22 @@ describe('POST /api/jwt', () => {
 
   it('returns token on success', async () => {
     mockCreate.mockReturnValue({ ok: true, token: 'tok123', expiresAt: '2025-01-01T00:00:00.000Z' });
-    const res = await POST(makeRequest({ identity_id: 'x', signature: 'y' }) as any);
+    const res = await POST(
+      makeRequest({ identity_id: 'x', signature: 'y', timestamp: Date.now() }) as any,
+    );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.token).toBe('tok123');
     expect(body.expires_at).toBe('2025-01-01T00:00:00.000Z');
+  });
+
+  it('passes audience to service when provided', async () => {
+    mockCreate.mockReturnValue({ ok: true, token: 'tok', expiresAt: '2025-01-01T00:00:00.000Z' });
+    const ts = Date.now();
+    await POST(
+      makeRequest({ identity_id: 'x', signature: 'y', timestamp: ts, audience: 'botstore' }) as any,
+    );
+    expect(mockCreate).toHaveBeenCalledWith('x', 'y', ts, {}, '24h', 'botstore');
   });
 });
 
@@ -79,5 +98,11 @@ describe('POST /api/jwt/verify', () => {
     const body = await res.json();
     expect(body.valid).toBe(true);
     expect(body.claims.sub).toBe('id123');
+  });
+
+  it('passes audience to service when provided', async () => {
+    mockVerify.mockReturnValue({ ok: true, claims: { sub: 'id' } });
+    await POSTVerify(makeRequest({ token: 'tok', audience: 'botstore' }) as any);
+    expect(mockVerify).toHaveBeenCalledWith('tok', 'botstore');
   });
 });

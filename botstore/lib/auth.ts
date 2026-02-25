@@ -1,6 +1,5 @@
-/**
- * Verifies a JWT by calling botdentity's /api/jwt/verify endpoint.
- */
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 function botdentityUrl(): string {
   return process.env.BOTDENTITY_URL ?? 'http://localhost:3001';
@@ -11,28 +10,53 @@ export interface JwtClaims {
   iat: number;
   exp: number;
   iss: string;
+  jti?: string;
   [key: string]: unknown;
+}
+
+interface JWK {
+  kty: string;
+  crv: string;
+  x: string;
+  y: string;
+  kid: string;
+  use: string;
+  alg: string;
+}
+
+let jwksCache: { keys: JWK[]; fetchedAt: number } | null = null;
+const JWKS_CACHE_TTL = 3_600_000; // 1 hour
+
+async function fetchJwks(): Promise<JWK[]> {
+  const now = Date.now();
+  if (jwksCache && now - jwksCache.fetchedAt < JWKS_CACHE_TTL) return jwksCache.keys;
+  const res = await fetch(`${botdentityUrl()}/api/jwks`);
+  if (!res.ok) throw new Error(`Failed to fetch JWKS: ${res.status}`);
+  const { keys } = (await res.json()) as { keys: JWK[] };
+  jwksCache = { keys, fetchedAt: now };
+  return keys;
 }
 
 export async function verifyJwt(
   token: string,
 ): Promise<{ valid: true; claims: JwtClaims } | { valid: false; error: string }> {
-  let res: Response;
   try {
-    res = await fetch(`${botdentityUrl()}/api/jwt/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token }),
-    });
-  } catch (err) {
-    return { valid: false, error: `Could not reach botdentity: ${(err as Error).message}` };
-  }
+    const keys = await fetchJwks();
+    const header = jwt.decode(token, { complete: true })?.header;
+    const kid = header?.kid;
+    const jwk = kid ? keys.find((k) => k.kid === kid) : keys[0];
+    if (!jwk) return { valid: false, error: 'Signing key not found' };
 
-  const body = await res.json();
-  if (!res.ok || !body.valid) {
-    return { valid: false, error: body.error ?? 'Invalid token' };
+    const publicKey = crypto.createPublicKey({ key: jwk as unknown as crypto.JsonWebKey, format: 'jwk' });
+    const claims = jwt.verify(token, publicKey, {
+      algorithms: ['ES256'],
+      issuer: 'botdentity',
+      audience: 'botstore',
+    }) as JwtClaims;
+    return { valid: true, claims };
+  } catch (err) {
+    return { valid: false, error: (err as Error).message };
   }
-  return { valid: true, claims: body.claims as JwtClaims };
 }
 
 export function extractBearer(authHeader: string | null): string | null {

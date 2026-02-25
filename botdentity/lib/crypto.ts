@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { DatabaseSync } from 'node:sqlite';
+import { v4 as uuidv4 } from 'uuid';
 
 // ── Server signing secret ─────────────────────────────────────────────────────
 
@@ -48,4 +49,47 @@ export function verifySignature(
   } catch {
     return false;
   }
+}
+
+// ── EC P-256 signing key ──────────────────────────────────────────────────────
+
+interface SigningKeyRow {
+  kid: string;
+  public_key: string;
+  private_key: string;
+}
+
+export function getOrCreateSigningKey(db: DatabaseSync): {
+  kid: string;
+  privateKey: crypto.KeyObject;
+  publicKey: crypto.KeyObject;
+} {
+  const row = db
+    .prepare('SELECT kid, public_key, private_key FROM signing_keys LIMIT 1')
+    .get() as SigningKeyRow | undefined;
+
+  if (row) {
+    return {
+      kid: row.kid,
+      privateKey: crypto.createPrivateKey(row.private_key),
+      publicKey: crypto.createPublicKey(row.public_key),
+    };
+  }
+
+  const { privateKey: privatePem, publicKey: publicPem } = crypto.generateKeyPairSync('ec', {
+    namedCurve: 'P-256',
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    publicKeyEncoding: { type: 'spki', format: 'pem' },
+  }) as { privateKey: string; publicKey: string };
+
+  const kid = uuidv4();
+  db.prepare(
+    'INSERT INTO signing_keys (kid, public_key, private_key, algorithm, created_at) VALUES (?, ?, ?, ?, ?)',
+  ).run(kid, publicPem, privatePem, 'ES256', new Date().toISOString());
+
+  return {
+    kid,
+    privateKey: crypto.createPrivateKey(privatePem),
+    publicKey: crypto.createPublicKey(publicPem),
+  };
 }

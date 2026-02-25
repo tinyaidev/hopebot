@@ -163,6 +163,19 @@ describe('PUT /api/blobs/:id', () => {
     expect(res.status).toBe(403);
   });
 
+  it('returns 413 when Content-Length exceeds MAX_BLOB_BYTES', async () => {
+    mockExtract.mockReturnValue('tok');
+    mockVerify.mockResolvedValue(goodAuth);
+    const res = await PUT(
+      makeRequest('PUT', Buffer.from('x'), {
+        Authorization: 'Bearer tok',
+        'Content-Length': String(100 * 1024 * 1024), // 100MB > default 50MB
+      }) as any,
+      params,
+    );
+    expect(res.status).toBe(413);
+  });
+
   it('returns action: created on success (ok field not in response)', async () => {
     mockExtract.mockReturnValue('tok');
     mockVerify.mockResolvedValue(goodAuth);

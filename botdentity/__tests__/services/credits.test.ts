@@ -15,8 +15,9 @@ beforeEach(() => {
 describe('credits.buy', () => {
   it('grants 1000 credits', () => {
     const { id, private_key } = identityService.create('CreditBot');
-    const sig = signIdentityId(id, private_key);
-    const result = creditsService.buy(id, sig, 'test-slug');
+    const ts = Date.now();
+    const sig = signIdentityId(id, private_key, ts);
+    const result = creditsService.buy(id, sig, ts, 'test-slug');
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.creditsAdded).toBe(1000);
@@ -29,22 +30,37 @@ describe('credits.buy', () => {
 
   it('accumulates on repeat purchase', () => {
     const { id, private_key } = identityService.create('CreditBot');
-    const sig = signIdentityId(id, private_key);
-    creditsService.buy(id, sig, 'slug-1');
-    const result = creditsService.buy(id, sig, 'slug-2');
+    const ts = Date.now();
+    const sig = signIdentityId(id, private_key, ts);
+    creditsService.buy(id, sig, ts, 'slug-1');
+    const result = creditsService.buy(id, sig, ts, 'slug-2');
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.credits).toBe(2000);
   });
 
+  it('returns 401 for expired timestamp (replay protection)', () => {
+    const { id, private_key } = identityService.create('CreditBot');
+    const ts = Date.now() - 90_000; // 90 seconds ago
+    const sig = signIdentityId(id, private_key, ts);
+    const result = creditsService.buy(id, sig, ts, 'slug');
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.status).toBe(401);
+      expect(result.error).toMatch(/timestamp/i);
+    }
+  });
+
   it('returns 404 for unknown identity', () => {
-    const result = creditsService.buy('no-such-id', 'sig', 'slug');
+    const ts = Date.now();
+    const result = creditsService.buy('no-such-id', 'sig', ts, 'slug');
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.status).toBe(404);
   });
 
   it('returns 401 for invalid signature', () => {
     const { id } = identityService.create('CreditBot');
-    const result = creditsService.buy(id, 'badsig==', 'slug');
+    const ts = Date.now();
+    const result = creditsService.buy(id, 'badsig==', ts, 'slug');
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.status).toBe(401);
   });

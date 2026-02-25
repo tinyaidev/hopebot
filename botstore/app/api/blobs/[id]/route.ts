@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: 'Blob not found' }, { status: 404 });
   }
 
-  return new NextResponse(result.data, {
+  return new NextResponse(result.data as unknown as BodyInit, {
     headers: {
       'Content-Type': result.blob.content_type,
       'Content-Length': String(result.blob.size),
@@ -72,7 +72,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const rawFilename = req.headers.get('x-filename');
   const filename = rawFilename ? sanitizeFilename(rawFilename) || null : null;
 
+  const MAX_BYTES = parseInt(process.env.MAX_BLOB_BYTES ?? String(50 * 1024 * 1024));
+  const contentLength = req.headers.get('content-length');
+  if (contentLength && parseInt(contentLength) > MAX_BYTES) {
+    return NextResponse.json({ error: `Upload exceeds maximum size of ${MAX_BYTES} bytes` }, { status: 413 });
+  }
+
   const buffer = Buffer.from(await req.arrayBuffer());
+  if (buffer.length > MAX_BYTES) {
+    return NextResponse.json({ error: `Upload exceeds maximum size of ${MAX_BYTES} bytes` }, { status: 413 });
+  }
   const result = blobService.upsert(id, identityId, buffer, contentType, filename);
 
   if (!result.ok) {

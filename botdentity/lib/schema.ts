@@ -20,4 +20,18 @@ export const SCHEMA_SQL = `
     slug TEXT NOT NULL,
     created_at TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS signing_keys (
+    kid TEXT PRIMARY KEY,
+    public_key TEXT NOT NULL,
+    private_key TEXT NOT NULL,
+    algorithm TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS jti_revocations (
+    jti TEXT PRIMARY KEY,
+    identity_id TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  );
 `;

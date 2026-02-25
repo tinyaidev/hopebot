@@ -1,6 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { v4 as uuidv4 } from 'uuid';
 import { generateKeypair } from '../crypto';
+import { log } from '../logger';
 
 export interface IdentityRow {
   id: string;
@@ -19,6 +20,7 @@ export function createIdentityService(db: DatabaseSync) {
       db.prepare(
         'INSERT INTO identities (id, name, public_key, credits, created_at) VALUES (?, ?, ?, 0, ?)',
       ).run(id, name, publicKey, createdAt);
+      log('identity.created', { id, name });
       return {
         id,
         name,

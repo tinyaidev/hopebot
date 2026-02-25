@@ -23,7 +23,7 @@ describe('identity.create', () => {
     const result = service.create('TestBot');
     const row = service.getById(result.id);
     expect(row).toBeDefined();
-    expect((row as Record<string, unknown>).private_key).toBeUndefined();
+    expect((row as unknown as Record<string, unknown>).private_key).toBeUndefined();
   });
 
   it('creates distinct identities', () => {

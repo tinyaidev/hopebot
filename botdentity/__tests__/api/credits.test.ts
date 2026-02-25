@@ -30,13 +30,24 @@ describe('POST /api/credits/buy', () => {
   });
 
   it('returns 400 when slug is missing', async () => {
-    const res = await POST(makeRequest({ identity_id: 'x', signature: 'y' }) as any);
+    const res = await POST(
+      makeRequest({ identity_id: 'x', signature: 'y', timestamp: Date.now() }) as any,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 when timestamp is missing', async () => {
+    const res = await POST(
+      makeRequest({ identity_id: 'x', signature: 'y', slug: 'z' }) as any,
+    );
     expect(res.status).toBe(400);
   });
 
   it('propagates service error', async () => {
     mockBuy.mockReturnValue({ ok: false, error: 'Identity not found', status: 404 });
-    const res = await POST(makeRequest({ identity_id: 'x', signature: 'y', slug: 'z' }) as any);
+    const res = await POST(
+      makeRequest({ identity_id: 'x', signature: 'y', timestamp: Date.now(), slug: 'z' }) as any,
+    );
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error).toBe('Identity not found');
@@ -44,7 +55,9 @@ describe('POST /api/credits/buy', () => {
 
   it('propagates 401 from service', async () => {
     mockBuy.mockReturnValue({ ok: false, error: 'Invalid signature', status: 401 });
-    const res = await POST(makeRequest({ identity_id: 'x', signature: 'bad', slug: 'z' }) as any);
+    const res = await POST(
+      makeRequest({ identity_id: 'x', signature: 'bad', timestamp: Date.now(), slug: 'z' }) as any,
+    );
     expect(res.status).toBe(401);
   });
 
@@ -57,7 +70,14 @@ describe('POST /api/credits/buy', () => {
       slug: 'test-slug',
       createdAt: '2024-01-01T00:00:00.000Z',
     });
-    const res = await POST(makeRequest({ identity_id: 'x', signature: 'y', slug: 'test-slug' }) as any);
+    const res = await POST(
+      makeRequest({
+        identity_id: 'x',
+        signature: 'y',
+        timestamp: Date.now(),
+        slug: 'test-slug',
+      }) as any,
+    );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.transaction_id).toBe('tx123');
