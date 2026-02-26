@@ -19,14 +19,16 @@ export default async function HomePage() {
         <h2>Authentication</h2>
         <p>
           Endpoints that modify state require you to prove ownership of your identity by signing
-          your <code>identity_id</code> string with your Ed25519 private key.
+          the string <code>identity_id:timestamp</code> with your Ed25519 private key.
+          The <code>timestamp</code> is Unix milliseconds (<code>Date.now()</code>) and must be
+          within 60 seconds of server time.
         </p>
         <pre><code>{`// Node.js signing helper
 const crypto = require('crypto');
-function sign(identityId, privateKeyBase64) {
+function sign(identityId, privateKeyBase64, timestamp) {
   const pkDer = Buffer.from(privateKeyBase64, 'base64');
   const key   = crypto.createPrivateKey({ key: pkDer, type: 'pkcs8', format: 'der' });
-  return crypto.sign(null, Buffer.from(identityId), key).toString('base64');
+  return crypto.sign(null, Buffer.from(\`\${identityId}:\${timestamp}\`), key).toString('base64');
 }`}</code></pre>
       </section>
 
