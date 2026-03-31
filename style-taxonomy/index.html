@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Men's Style Taxonomy</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f8f6;
+      --card-bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --border: #e8e4df;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.13);
+      --radius: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --formal:     #1a2744;
+      --smart:      #2d4a3e;
+      --casual:     #4a3728;
+      --subculture: #3d1f3a;
+      --outdoor:    #1f3a2a;
+      --leisure:    #1f3a4a;
+      --alternative:#3a2a1f;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* ── HERO ── */
+    .hero { background: #0d0d0d; color: #f5f3ef; padding: 72px 32px 56px; text-align: center; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #888; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px; }
+    .hero h1 em { font-style: normal; color: #c8b89a; }
+    .hero p { max-width: 560px; margin: 0 auto; color: #aaa; font-size: 1.05rem; }
+    .hero-meta { margin-top: 24px; font-size: 12px; color: #555; letter-spacing: 0.05em; }
+
+    /* ── API KEY BANNER ── */
+    .api-banner {
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .api-banner.has-key { background: #0d1f0d; border-color: #1a3a1a; }
+    .api-status {
+      font-size: 12px;
+      color: #888;
+      flex: 1;
+      min-width: 200px;
+    }
+    .api-status.ok { color: #5a9a5a; }
+    .api-key-input {
+      flex: 1;
+      min-width: 200px;
+      max-width: 360px;
+      padding: 7px 12px;
+      background: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #f0f0f0;
+      font-size: 13px;
+      font-family: monospace;
+    }
+    .api-key-input::placeholder { color: #666; }
+    .api-key-input:focus { outline: none; border-color: #c8b89a; }
+    .api-btn {
+      padding: 7px 16px;
+      background: #c8b89a;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .api-btn:hover { background: #ddd; }
+    .api-btn.clear { background: transparent; color: #888; border: 1px solid #444; }
+    .api-btn.clear:hover { color: #ccc; border-color: #666; }
+    .api-help { font-size: 11px; color: #555; }
+    .api-help a { color: #888; }
+
+    /* ── FILTERS ── */
+    .filter-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(249,248,246,0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; gap: 4px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0; padding: 13px 16px; border: none; background: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--text-muted); white-space: nowrap;
+      border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+    }
+    .filter-btn:hover { color: var(--text); }
+    .filter-btn.active { color: var(--text); border-bottom-color: var(--text); }
+
+    .count-bar { max-width: 1400px; margin: 0 auto; padding: 18px 24px 4px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+    /* ── GRID ── */
+    .grid { max-width: 1400px; margin: 0 auto; padding: 16px 24px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 28px; }
+
+    /* ── CARD ── */
+    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+    .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .card[data-hidden="true"] { display: none; }
+
+    .card-header { height: 4px; }
+    .card[data-category="formal"]      .card-header { background: var(--formal); }
+    .card[data-category="smart"]       .card-header { background: var(--smart); }
+    .card[data-category="casual"]      .card-header { background: var(--casual); }
+    .card[data-category="subculture"]  .card-header { background: var(--subculture); }
+    .card[data-category="outdoor"]     .card-header { background: var(--outdoor); }
+    .card[data-category="leisure"]     .card-header { background: var(--leisure); }
+    .card[data-category="alternative"] .card-header { background: var(--alternative); }
+
+    /* ── GALLERY ── */
+    .gallery { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #111; cursor: pointer; }
+    .gallery-main { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.35s, transform 0.3s; }
+    .gallery:hover .gallery-main { transform: scale(1.02); }
+    .gallery-main.fading { opacity: 0; }
+
+    /* placeholder shown when no API key or image fails */
+    .gallery-placeholder {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      color: #555; font-size: 12px; text-align: center; padding: 20px;
+    }
+    .gallery-placeholder .ph-icon { font-size: 32px; opacity: 0.35; }
+    .gallery-placeholder .ph-label { font-size: 13px; font-weight: 500; color: #888; letter-spacing: 0.05em; }
+    .gallery-placeholder .ph-query { font-size: 10px; color: #444; font-style: italic; max-width: 240px; line-height: 1.5; }
+    .gallery-placeholder .ph-key-hint { font-size: 10px; color: #c8b89a; margin-top: 4px; }
+    .gallery-main[data-loaded="false"] + .gallery-placeholder,
+    .gallery-main[data-loaded="hidden"] { display: none; }
+    .gallery-main[data-loaded="false"] { display: none; }
+
+    /* loading shimmer */
+    .gallery-loading { position: absolute; inset: 0; background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .gallery-loading.done { display: none; }
+
+    /* thumbs */
+    .gallery-thumbs { display: flex; gap: 3px; padding: 3px; background: #f0ede8; }
+    .thumb-slot { flex: 1; aspect-ratio: 1; border-radius: 3px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
+    .thumb-slot.active { border-color: #333; }
+    .thumb-slot img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.65; transition: opacity 0.15s; }
+    .thumb-slot:hover img, .thumb-slot.active img { opacity: 1; }
+    .thumb-slot .thumb-ph { width: 100%; height: 100%; background: #ddd; }
+
+    /* ── CARD BODY ── */
+    .card-body { padding: 22px 22px 20px; }
+    .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .category-badge {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 20px; color: #fff;
+    }
+    .card[data-category="formal"]      .category-badge { background: var(--formal); }
+    .card[data-category="smart"]       .category-badge { background: var(--smart); }
+    .card[data-category="casual"]      .category-badge { background: var(--casual); }
+    .card[data-category="subculture"]  .category-badge { background: var(--subculture); }
+    .card[data-category="outdoor"]     .category-badge { background: var(--outdoor); }
+    .card[data-category="leisure"]     .category-badge { background: var(--leisure); }
+    .card[data-category="alternative"] .category-badge { background: var(--alternative); }
+    .card-number { font-size: 11px; color: #bbb; font-weight: 500; }
+    .card h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .card-tagline { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 14px; }
+    .card-description { font-size: 0.875rem; color: #3a3a3a; line-height: 1.7; margin-bottom: 18px; }
+    .elements-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .elements-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .elements-list li { font-size: 12.5px; color: #444; padding-left: 16px; position: relative; line-height: 1.5; }
+    .elements-list li::before { content: '—'; position: absolute; left: 0; color: #bbb; }
+
+    /* palette */
+    .palette { display: flex; gap: 6px; margin-top: 16px; align-items: center; }
+    .swatch { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid rgba(0,0,0,0.08); flex-shrink: 0; }
+    .palette-names { font-size: 10px; color: #aaa; margin-left: 6px; flex: 1; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.93); align-items: center; justify-content: center; padding: 20px; }
+    .lightbox.open { display: flex; }
+    .lightbox-img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 6px; }
+    .lightbox-close { position: absolute; top: 16px; right: 20px; color: #fff; font-size: 28px; cursor: pointer; background: none; border: none; opacity: 0.7; transition: opacity 0.15s; }
+    .lightbox-close:hover { opacity: 1; }
+    .lightbox-caption { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #aaa; font-size: 12px; white-space: nowrap; }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
+    footer a { color: inherit; }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; padding: 12px 12px 60px; gap: 20px; }
+      .hero { padding: 48px 20px 40px; }
+      .api-banner { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="hero-eyebrow">A visual reference</p>
+  <h1>Men's <em>Style</em> Taxonomy</h1>
+  <p>Twenty distinct aesthetic territories in menswear — from strict formal codes to countercultural uniforms — with the key design signals that define each one.</p>
+  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 curated images each &nbsp;·&nbsp; From black tie to gorpcore</p>
+</header>
+
+<!-- API Key Banner -->
+<div class="api-banner" id="apiBanner">
+  <div class="api-status" id="apiStatus">📷 Add an Unsplash API key to load real fashion images</div>
+  <input class="api-key-input" id="apiKeyInput" type="password" placeholder="Paste your Unsplash Access Key…" autocomplete="off">
+  <button class="api-btn" id="apiSaveBtn">Load Images</button>
+  <button class="api-btn clear" id="apiClearBtn" style="display:none">Clear</button>
+  <div class="api-help">Free key at <a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> — takes 30 seconds</div>
+</div>
+
+<nav class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all">All&nbsp;(20)</button>
+  <button class="filter-btn" data-filter="formal">Formal&nbsp;(2)</button>
+  <button class="filter-btn" data-filter="smart">Smart&nbsp;Casual&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="casual">Casual&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="subculture">Subculture&nbsp;(4)</button>
+  <button class="filter-btn" data-filter="outdoor">Outdoor&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="leisure">Leisure&nbsp;(2)</button>
+  <button class="filter-btn" data-filter="alternative">Alternative&nbsp;(3)</button>
+</nav>
+
+<div class="count-bar" id="countBar">Showing all 20 styles</div>
+<main class="grid" id="grid"></main>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&#x2715;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<footer>
+  <p>Images via <a href="https://unsplash.com" target="_blank">Unsplash</a> · Built with hopebot</p>
+</footer>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const CATEGORIES = {
+  formal:'Formal', smart:'Smart Casual', casual:'Casual',
+  subculture:'Subculture', outdoor:'Outdoor', leisure:'Leisure', alternative:'Alternative',
+};
+
+// imageQueries: 5 search strings per style, ordered from most to least diagnostic of the aesthetic.
+// These are passed to the Unsplash Search API: /search/photos?query={q}&orientation=portrait
+const STYLES = [
+
+  // ── FORMAL ──
+  {
+    id:'black-tie', num:'01', name:'Black Tie', tagline:'Evening formality at its most precise', category:'formal',
+    description:'Black tie is the strictest codified dress code in modern menswear — a formal evening uniform essentially unchanged since the 1880s. Its power lies in uniformity: every man wearing it signals mutual respect for the occasion. Where other styles invite interpretation, black tie demands adherence, and that constraint is itself a kind of freedom.',
+    elements:[
+      'Tuxedo jacket with satin or grosgrain peak or shawl lapels',
+      'Matching trousers with a single satin braid stripe down each leg',
+      'Crisp white dress shirt with bib-front or pleated placket',
+      'Black self-tie bow tie in silk or grosgrain — never pre-tied',
+      'Black patent leather or highly polished Oxford shoes',
+      'Cummerbund or low-cut evening waistcoat; white pocket square',
+    ],
+    palette:['#0A0A0A','#F5F3EF','#2C2C2C','#8B7355','#C0A882'],
+    paletteNames:['Jet black','Ivory','Midnight','Champagne','Gold'],
+    imageQueries:['tuxedo men formal black tie gala','black bow tie suit evening','tuxedo jacket lapel formal wear','black tie dinner jacket white shirt','formal evening menswear tuxedo'],
+  },
+  {
+    id:'power-suit', num:'02', name:'Power Suiting', tagline:'Structured authority in the boardroom', category:'formal',
+    description:'Power suiting communicates dominance and institutional credibility through precise tailoring. It differs from black tie by functioning in daylight contexts — the boardroom, the courtroom, the negotiating table — and allows more individual expression through colour, lapel width, and tie choice. A well-cut suit doesn\'t just fit a body; it shapes how others read the person inside it.',
+    elements:[
+      'Two- or three-piece suit — ideally bespoke or made-to-measure',
+      'Peak lapels on double-breasted; notch on single-breasted',
+      'Spread collar dress shirt in white, pale blue, or subtle stripe',
+      'Silk tie in solid, stripe, or small pattern — Windsor knot',
+      'Oxford or Derby shoes in black or dark brown leather',
+      'White linen pocket square in flat or TV fold',
+    ],
+    palette:['#1A2744','#4A5568','#8B8680','#D4C5B0','#F5F0E8'],
+    paletteNames:['Navy','Slate','Mid-grey','Stone','Ivory'],
+    imageQueries:['mens business suit tailored formal office','navy suit tie professional man','double breasted suit men boardroom','tailored suit lapel pocket square','power dressing men dark suit'],
+  },
+
+  // ── SMART CASUAL ──
+  {
+    id:'ivy-league', num:'03', name:'Ivy League / Preppy', tagline:'Classic American collegiate confidence', category:'smart',
+    description:'Born on the campuses of Harvard, Yale, and Princeton in the 1950s, Ivy League style codified a certain East Coast patrician ease. It is not about fashion — it is about the illusion that you\'ve never thought about fashion at all, while wearing clothes that quietly broadcast generational wealth and institutional belonging. Everything looks slightly worn-in, even when new.',
+    elements:[
+      'OCBD (Oxford cloth button-down) shirts, often in pale blue or white',
+      'Navy blazer with brass buttons; tweed sport coat',
+      'Slim chinos in khaki, stone, or navy; grey flannel trousers',
+      'Penny loafers or Bass Weejuns; white tennis sneakers',
+      'Crew-neck or V-neck sweaters in wool or cotton',
+      'Rep-stripe ties; madras or seersucker in summer',
+    ],
+    palette:['#1A2744','#8B7355','#D4C89A','#C8392B','#F5F0E8'],
+    paletteNames:['Navy','Camel','Khaki','Crimson','Off-white'],
+    imageQueries:['preppy men fashion blazer chinos loafers','ivy league style oxford button down shirt','navy blazer men collegiate khaki pants','polo shirt chinos men classic style','tweed sport coat men preppy aesthetic'],
+  },
+  {
+    id:'old-money', num:'04', name:'Old Money / Quiet Luxury', tagline:'Wealth whispered, never announced', category:'smart',
+    description:'Quiet luxury dresses in the confidence that quality needs no branding. Where streetwear screams logos and fast fashion imitates luxury, old money style operates entirely through material and cut. The tell is always in the fabric — the weight of a cashmere pullover, the drape of a linen shirt, the particular softness of long-worn leather. Nothing new, nothing cheap, nothing loud.',
+    elements:[
+      'Cashmere and merino knitwear in cream, camel, navy, and sand',
+      'Unstructured linen or lightweight wool blazers',
+      'Tailored trousers in neutral tones — no logos, no visible branding',
+      'Quality leather goods: belt, loafers, watch strap',
+      'Monochromatic or tone-on-tone colour building',
+      'Subdued palette only: off-white, stone, mushroom, slate, ivory',
+    ],
+    palette:['#E8E0D0','#C8B89A','#9A8878','#6B5B4E','#3A2E28'],
+    paletteNames:['Ivory','Camel','Mocha','Espresso','Umber'],
+    imageQueries:['quiet luxury men fashion minimal neutral beige','cashmere sweater men elegant understated','old money aesthetic men cream linen','minimal menswear expensive quality neutral tone','luxury simple men clothing no logo'],
+  },
+  {
+    id:'dark-academia', num:'05', name:'Dark Academia', tagline:'Scholarship dressed in autumn and shadow', category:'smart',
+    description:'Dark academia constructs an identity around intellectual pursuit — literature, history, philosophy — and dresses that identity in the textures of an old university library. It is inherently theatrical, referencing a particular version of European academic life that may never fully have existed, but whose romance is undeniable. The palette is permanently autumnal.',
+    elements:[
+      'Tweed and herringbone sport coats; structured blazers',
+      'Oxford shirts and turtleneck sweaters layered underneath',
+      'Tailored wool trousers in charcoal, dark green, or brown',
+      'Brogues, Chelsea boots, or plain-toe Derbies in dark leather',
+      'Leather satchels and briefcases; vintage accessories',
+      'Round tortoiseshell glasses; wool scarves; plaid wool ties',
+    ],
+    palette:['#2C2416','#4A3728','#6B5B3E','#8B7B6B','#C4B49A'],
+    paletteNames:['Bark brown','Walnut','Caramel','Tan','Parchment'],
+    imageQueries:['dark academia men fashion tweed blazer brogues','academic aesthetic men cardigan trousers','scholarly style men autumn layers brown','vintage intellectual fashion men wool coat','university aesthetic men dark library style'],
+  },
+
+  // ── CASUAL ──
+  {
+    id:'smart-casual', num:'06', name:'Smart Casual', tagline:'Dressed up without looking like you tried', category:'casual',
+    description:'Smart casual is the most-worn and least-understood dress code — the zone between jeans-and-a-tee and a full suit. Done well, it signals competence and effortless style; done poorly, it looks confused. The key is intentional contrast: a polished piece with a relaxed one. Smart casual is not a single look but a set of relationships between garments.',
+    elements:[
+      'Dark-wash jeans or chinos as the trouser foundation',
+      'Collared shirts — OCBD, popover, or polo — tucked or half-tucked',
+      'Unstructured blazer or sport coat worn casually',
+      'White leather sneakers, suede loafers, or clean Chelsea boots',
+      'Optional layering: lightweight knit or crew-neck sweater',
+      'Neat accessories: leather watch, simple belt',
+    ],
+    palette:['#2C3440','#4A5568','#8B7355','#D4C5B0','#F5F0E8'],
+    paletteNames:['Charcoal','Slate','Tan','Stone','Cream'],
+    imageQueries:['smart casual men outfit blazer dark jeans','smart casual collared shirt chinos loafers','dressed casual men sport coat clean look','men polished relaxed style everyday fashion','smart casual men white sneakers blazer'],
+  },
+  {
+    id:'normcore', num:'07', name:'Normcore', tagline:'Deliberately, defiantly unremarkable', category:'casual',
+    description:'Normcore emerged as a deliberate anti-fashion stance — the idea that freedom from status-signalling through clothes is itself a form of style. It is not about being sloppy; the jeans are clean, the tee is neat. It is about rejecting the anxiety of trend-chasing entirely. Ironically, assembled with intention, the plain uniform becomes quietly striking in a sea of peacocking.',
+    elements:[
+      'Plain white or grey crewneck tee, well-fitted',
+      'Straight-cut mid-rise jeans in a medium or dark wash',
+      'Simple white canvas sneakers — New Balance, Nike Cortez',
+      'Zip-up fleece, basic crewneck sweatshirt, or quarter-zip',
+      'Beige or grey chinos as an alternative to denim',
+      'Absence of visible logos, graphics, or embellishment',
+    ],
+    palette:['#F5F5F5','#D0D0D0','#9A9A9A','#4A4A4A','#1A1A1A'],
+    paletteNames:['White','Light grey','Mid grey','Charcoal','Near-black'],
+    imageQueries:['normcore men fashion plain white tee jeans','minimalist casual men simple neutral clothes','basic men outfit plain no logo clean','everyday plain men fashion white sneakers','anti fashion men simple aesthetic grey'],
+  },
+  {
+    id:'americana', num:'08', name:'Americana / Heritage Workwear', tagline:'Built to last, worn with history', category:'casual',
+    description:'Americana style draws directly from the clothing traditions of American labour — the miner, the rancher, the farmer — filtered through a lens of craft and longevity. It prizes raw materials, honest construction, and provenance. A selvedge denim jacket doesn\'t look new; it looks like it\'s been with you through something. The patina is the point.',
+    elements:[
+      'Raw selvedge or heavyweight denim — 14oz+ in jeans, 12oz+ in jackets',
+      'Chore coats and Type II/III denim jackets',
+      'Heavyweight cotton flannel shirts in plaids and checks',
+      'Work boots: Red Wing Iron Rangers, Thorogood Mocs, White\'s',
+      'Canvas chinos or five-pocket pants in olive or khaki',
+      'Minimal branding; quality leather belts with simple hardware',
+    ],
+    palette:['#3A2E22','#5C4A32','#8B7355','#C4A882','#4A5C3A'],
+    paletteNames:['Bark','Tobacco','Camel','Sand','Olive'],
+    imageQueries:['raw selvedge denim work boots americana heritage','heritage workwear men chore coat flannel shirt','americana style men raw denim jacket rugged','red wing boots denim jeans man workwear','selvedge denim bib overalls work chore coat'],
+  },
+
+  // ── SUBCULTURE ──
+  {
+    id:'streetwear', num:'09', name:'Streetwear', tagline:'The luxury of the street, minted in drops', category:'subculture',
+    description:'Streetwear evolved from skate and surf culture in 1980s California, absorbed hip-hop and graffiti, and has now colonised luxury fashion itself. Its primary unit is the graphic tee or hoodie; its secondary unit is the sneaker. What distinguishes streetwear from casual is obsessive attention to brand and drop culture — the rarity and cultural moment of a piece carries as much weight as its design.',
+    elements:[
+      'Graphic-heavy hoodies and crewneck sweatshirts in oversized silhouettes',
+      'Cargo pants or relaxed-fit trousers with a technical aesthetic',
+      'Statement sneakers: Jordan 1s, New Balance 550, Adidas Samba',
+      'Snapback or 5-panel caps; beanies in winter',
+      'Logo-heavy pieces: Supreme, Palace, Off-White, Fear of God',
+      'Layering: oversized tee under unbuttoned flannel or track jacket',
+    ],
+    palette:['#0D0D0D','#F5F5F5','#C8392B','#F5A623','#2E7D4A'],
+    paletteNames:['Black','White','Red','Orange','Green'],
+    imageQueries:['streetwear men graphic hoodie cargo pants urban','street style men oversized fit sneakers cap','urban men fashion streetwear bold graphic tee','hype streetwear outfit men sneakers hoodie','street fashion men drop culture urban'],
+  },
+  {
+    id:'hip-hop', num:'10', name:'Hip-Hop / Urban', tagline:'Swagger, abundance, and cultural currency', category:'subculture',
+    description:'Hip-hop fashion emerged from New York in the late 1970s as a statement of aspiration and identity. Its visual language borrows from athletics, luxury, and street life simultaneously. It broadcasts volume — of clothing, of gold, of references. The current wave cycles between 90s revival (baggy jeans, Timbs, Polo Sport) and contemporary luxury-branded casualwear.',
+    elements:[
+      'Oversized or baggy silhouette throughout — jeans, shirts, outerwear',
+      'Timberland boots, Air Force 1s, Jordan 1s, or retro athletic sneakers',
+      'Bucket hats, fitted caps; chunky gold or diamond jewellery',
+      'Sportswear tracksuits from Nike, Adidas, or luxury labels',
+      'Puffer coats and hoodies in bold colourways',
+      'Varsity jackets; sportswear with deliberate luxury references',
+    ],
+    palette:['#0D0D0D','#C8A84B','#C8392B','#1A3A5C','#F5F5F5'],
+    paletteNames:['Black','Gold','Red','Royal blue','White'],
+    imageQueries:['hip hop men fashion urban baggy oversized gold chain','90s hiphop style men baggy jeans timberland','rap culture fashion men gold jewellery street','urban streetwear men bucket hat puffer jacket','hip hop aesthetic men tracksuit bold color'],
+  },
+  {
+    id:'punk-rock', num:'11', name:'Punk / Rock', tagline:'Antagonism as a design principle', category:'subculture',
+    description:'Punk emerged in 1970s London and New York as a direct visual assault on mainstream taste. Every element was chosen to provoke: studs where smooth leather would be, safety pins where stitching would be, tears where fabric should be whole. Rock style shares this adversarial DNA but leans toward the theatrical, borrowing from glam and heavy metal.',
+    elements:[
+      'Black leather jacket — Perfecto/motorcycle style — often studded or painted',
+      'Ripped skinny jeans or bondage trousers in black',
+      'Band merchandise tees, especially for iconic artists',
+      'Combat boots: Dr. Martens 1460s, steel-toed work boots',
+      'Studs, spikes, chains, and safety pins as deliberate ornamentation',
+      'Plaid or tartan — deconstructed or worn as a tied shirt',
+    ],
+    palette:['#0A0A0A','#C8392B','#E8D44D','#F5F5F5','#8B2FC8'],
+    paletteNames:['Black','Danger red','Canary','White','Violet'],
+    imageQueries:['punk rock leather jacket studs men rebellious','rock style men leather jacket band tee combat boots','punk fashion men studded jacket ripped jeans','rock aesthetic men dark leather accessories chains','punk men outfit dr martens boots leather'],
+  },
+  {
+    id:'gothic', num:'12', name:'Gothic', tagline:'Victorian mourning dressed for the 21st century', category:'subculture',
+    description:'Gothic menswear operates entirely in the register of darkness, mystery, and the elegantly morbid. It drew from 1980s post-punk, Victorian mourning dress, and horror aesthetics to construct a wearable counter-world. The commitment is total: a half-goth outfit reads as confused. The style requires all-in execution — black on black on black, textured, layered, intentional.',
+    elements:[
+      'All-black palette; occasional deep crimson, purple, or silver accent',
+      'Victorian-inspired frilled shirts; brocade waistcoats',
+      'Black drainpipe jeans or leather trousers',
+      'Platform boots — New Rock or Dr. Martens — heavy soled',
+      'Layering of textures: velvet, leather, lace, fishnet',
+      'Occult or symbolic jewellery: crosses, pentagrams, skull rings',
+    ],
+    palette:['#0A0A0A','#1A0A1A','#3A0020','#8B0000','#C0C0C0'],
+    paletteNames:['Black','Dark void','Bloodline','Crimson','Silver'],
+    imageQueries:['gothic men fashion all black velvet leather dark','goth men style dark aesthetic black platform boots','gothic dark fashion men silver jewelry rings chains','alternative goth men outfit black layers texture','victorian gothic men dark fashion aesthetic'],
+  },
+
+  // ── OUTDOOR ──
+  {
+    id:'gorpcore', num:'13', name:'Gorpcore', tagline:'Technical outdoor gear elevated to daily uniform', category:'outdoor',
+    description:'Gorpcore takes the functional clothing of backcountry hikers and trail runners — waterproof shells, insulated vests, trail footwear — and reframes it as an urban aesthetic. The brands matter: Arc\'teryx, Patagonia, Salomon, Norrøna. It is anti-fashion in its commitment to function, but deeply fashion-aware in its curation. The joke is that most gorpcore outfits never leave a city.',
+    elements:[
+      'Arc\'teryx, Patagonia, or Norrøna shell jackets in vibrant colourways',
+      'Technical fleece midlayer — Patagonia R1, North Face Denali',
+      'Cargo pants or relaxed hiking trousers; base-layer leggings',
+      'Trail runners: Salomon XT-6, Hoka Speedgoat, Merrell Moab',
+      'Mesh vests, stuff sacks worn as bags, technical backpacks',
+      'Functional accessories: buff neck gaiter, wool beanie, trekking socks',
+    ],
+    palette:['#2A4A2A','#4A7A3A','#C8A84B','#F5A623','#2E4A6A'],
+    paletteNames:['Forest','Leaf','Ochre','Amber','Mountain blue'],
+    imageQueries:['gorpcore men outdoor fashion technical jacket cargo','technical puffer jacket cargo pants urban men','outdoor gear fashion men arc teryx patagonia','hiking trail runner sneakers fashion men','functional outdoor wear men fashion gorpcore'],
+  },
+  {
+    id:'techwear', num:'14', name:'Techwear', tagline:'Engineered for the dystopian city', category:'outdoor',
+    description:'Techwear builds clothing from first principles of urban utility: maximum storage, weather protection, and freedom of movement wrapped in a black near-future aesthetic. It is influenced by cyberpunk fiction and tactical gear in equal measure. The garments are genuinely technical — seam-sealed waterproofing, articulated knees, modular attachment points — but worn as a fashion statement.',
+    elements:[
+      'Technical hardshell or softshell jacket in black — often GORE-TEX',
+      'Multi-pocket cargo trousers with utility webbing and zip closures',
+      'Tabi boots or technical sneakers — ACG, Nike Geometry',
+      'Sling bags, modular chest rigs, MOLLE-compatible accessories',
+      'Compression base layers beneath outer shells',
+      'Monochromatic black; occasional grey, olive, or slate accent',
+    ],
+    palette:['#0A0A0A','#1A1A1A','#2C3340','#4A5568','#888888'],
+    paletteNames:['Void black','Graphite','Slate','Storm grey','Silver'],
+    imageQueries:['techwear men black technical jacket urban futuristic','tech wear men black cargo pants multiple pockets','futuristic black fashion men technical gear','cyberpunk techwear men all black tactical','dark technical men fashion minimalist black'],
+  },
+  {
+    id:'military', num:'15', name:'Military / Utilitarian', tagline:'Function-first heritage with a civilised edge', category:'outdoor',
+    description:'Military style borrows the design vocabulary of army surplus and field uniforms — pockets, hardware, reinforcement, durability — and translates it into civilian dress. Unlike techwear\'s near-future aesthetic, military style is rooted in history: the trench coat came from the trenches; the bomber jacket from the cockpit. It is retrospective, tactile, and understated.',
+    elements:[
+      'Olive, khaki, and dark navy as the dominant palette',
+      'M65 field jackets, trench coats, MA-1 bombers, peacoats',
+      'Cargo trousers with functional cargo pockets',
+      'Leather combat boots or sturdy Vibram-soled work boots',
+      'Fatigue shirts and CPO shirts in poplin or heavy cotton',
+      'Simple metal hardware: D-rings, buckle belts, brass zips',
+    ],
+    palette:['#4A5C3A','#6B7B5A','#8B7355','#C4B49A','#2C3A2A'],
+    paletteNames:['Field olive','Sage','Khaki','Sand','Dark olive'],
+    imageQueries:['military style men jacket cargo pants olive khaki','army surplus fashion men field jacket utilitarian','bomber jacket men military cargo inspired look','trench coat men utilitarian heritage fashion','military inspired fashion men khaki olive practical'],
+  },
+
+  // ── LEISURE ──
+  {
+    id:'tropical', num:'16', name:'Tropical / Resort', tagline:'Sun, linen, and no obligations', category:'leisure',
+    description:'Resort wear is permission dressing — the signal that you are somewhere warm and free of professional obligations. At its worst it is tacky; at its best, it is a mood made tangible. The Hawaiian shirt is the genre\'s most iconic garment, but the real essence is in the fabrics: linen that breathes, cotton that drapes, silk that catches the light. Fit is everything — a sloppy resort outfit reads as lost luggage.',
+    elements:[
+      'Hawaiian or cabana shirts — bold florals, tropical prints',
+      'Linen or cotton-blend wide-leg trousers in white or beige',
+      'Swim shorts that double as casual shorts — high-quality, mid-thigh',
+      'Guayabera shirts for smarter occasions',
+      'Leather sandals or espadrilles; white suede loafers',
+      'Lightweight panama hat or woven straw hat; oversized sunglasses',
+    ],
+    palette:['#F5A623','#2E7D4A','#1A3A6A','#E8C88A','#F5F0E8'],
+    paletteNames:['Mango','Palm green','Ocean','Sand','Cream'],
+    imageQueries:['tropical resort wear men hawaiian shirt linen','beach vacation outfit men summer tropical print','resort fashion men linen pants relaxed warm','summer men fashion tropical floral shirt bright','holiday vacation men clothing beach coastal'],
+  },
+  {
+    id:'nautical', num:'17', name:'Nautical / Maritime', tagline:'East Coast privilege on the open water', category:'leisure',
+    description:'Nautical style carries the accumulated signifiers of sailing culture, yacht club membership, and coastal New England — even when worn far from any coastline. It is a cousin of preppy but with a more specific palette: navy, white, and red, with rope, anchor, and stripe motifs. It broadcasts a particular social world as much as it dresses for actual time on water.',
+    elements:[
+      'Breton stripe shirt in navy and white — the essential piece',
+      'Navy or white chinos; linen shorts in summer',
+      'Boat shoes or deck shoes: Sperry Top-Sider, Sebago Docksides',
+      'Rope or canvas belts in navy or red; anchor motif details',
+      'Lightweight cotton or linen blazer in navy',
+      'Simple watch with leather or NATO strap',
+    ],
+    palette:['#1A2744','#F5F5F5','#C8392B','#4A8AB8','#D4C5B0'],
+    paletteNames:['Navy','White','Yacht red','Sea blue','Rope tan'],
+    imageQueries:['nautical men style breton stripe shirt navy white','sailing fashion men navy blazer boat shoes','coastal preppy men maritime style stripe','deck shoes chinos men nautical look','yacht club men fashion navy white red'],
+  },
+
+  // ── ALTERNATIVE ──
+  {
+    id:'bohemian', num:'18', name:'Bohemian / Free Spirit', tagline:'Art and wandering, worn on the body', category:'alternative',
+    description:'Bohemian men\'s style traces from 19th century Parisian artistic circles through 1960s counterculture. It signals a rejection of bourgeois uniformity in favour of personal expression and global eclecticism. The silhouette is loose and comfortable, the fabrics are natural, and the accessories are layered and meaningful — each piece with a story, real or invented.',
+    elements:[
+      'Loose-fitting linen or cotton shirts, often with mandarin collars',
+      'Wide-leg or harem trousers; ethnic-print or patched jeans',
+      'Layered accessories: beaded necklaces, leather cuffs, rings on multiple fingers',
+      'Suede or leather boots; simple leather sandals',
+      'Printed scarves and bandanas worn around the neck or head',
+      'Earth tones and warm neutrals; occasionally rich jewel tones',
+    ],
+    palette:['#8B5E3A','#C4923A','#3A6B4A','#8B7355','#F5DDB0'],
+    paletteNames:['Rust','Burnt amber','Sage','Camel','Straw'],
+    imageQueries:['bohemian style men linen shirt loose layers earth tones','boho men fashion layered jewellery natural fabric','free spirit men aesthetic linen beads leather','hippie men fashion earth tones natural flowing','bohemian men outfit beaded necklace loose shirt'],
+  },
+  {
+    id:'grunge', num:'19', name:'Grunge', tagline:'90s Seattle anti-fashion made permanent', category:'alternative',
+    description:'Grunge was not designed; it was found in thrift stores and worn to rehearsal in rainy Seattle. It became a global aesthetic when Cobain and the Sub Pop roster appeared on magazine covers, and has never fully left. Its key quality is deliberate indifference — things worn when they\'re dirty, torn when they should be replaced, layered when layering is unnecessary.',
+    elements:[
+      'Plaid or buffalo-check flannel shirt — over a band tee or worn open',
+      'Ripped, faded, or distressed jeans in straight or skinny cuts',
+      'Oversized band or graphic tees, preferably vintage or faked-vintage',
+      'Combat boots — Dr. Martens, Chuck Taylors, Vans Old Skool',
+      'Oversized thrift-store sweaters, cardigans, long shorts',
+      'Worn leather jacket; dark beanie; nothing that looks intentional',
+    ],
+    palette:['#2C2416','#4A3A28','#6B5A3A','#C4B49A','#8B2A2A'],
+    paletteNames:['Mud','Brown','Tobacco','Faded tan','Rust red'],
+    imageQueries:['grunge men fashion flannel ripped jeans combat boots','90s grunge style men distressed denim band tee','grunge aesthetic men dark plaid flannel layered','seattle grunge look men thrift oversized','grunge men fashion combat boots worn leather jacket'],
+  },
+  {
+    id:'cottagecore', num:'20', name:'Cottagecore / Rural Idyll', tagline:'The countryside as a state of mind', category:'alternative',
+    description:'Cottagecore men\'s fashion constructs a nostalgic rural fantasy: the well-dressed countryman, in sympathy with the land and the seasons. It is soft, tactile, and grounded — literally. Tweed, wool, linen, and cotton in muted naturalistic tones. There is genuine overlap with dark academia but cottagecore runs warmer and greener, with more botanical motifs and less intellectual angst.',
+    elements:[
+      'Tweed or corduroy waistcoats and jackets in brown, green, and rust',
+      'Linen or cotton shirts — gingham, small check, or subtle stripe',
+      'Wide-wale corduroy trousers or loose-fit linen trousers',
+      'Derby shoes, leather brogues, or rubber-soled country boots',
+      'Knitwear in oat, heather, and mossy green; Fair Isle or cable knit',
+      'Natural accessories: woollen scarves, leather satchels',
+    ],
+    palette:['#4A5C3A','#8B7355','#C4B49A','#E8D4B0','#6B3A2A'],
+    paletteNames:['Moss green','Oak','Linen','Wheat','Chestnut'],
+    imageQueries:['cottagecore men fashion tweed waistcoat rustic natural','country style men linen corduroy cottage aesthetic','rural men fashion gingham shirt knitwear earthy','countryside men outfit tweed brogues pastoral','cottage rural fashion men natural wool linen'],
+  },
+];
+
+// ─────────────────────────────────────────────
+// UNSPLASH API
+// ─────────────────────────────────────────────
+const LS_KEY = 'unsplash_access_key';
+let unsplashKey = localStorage.getItem(LS_KEY) || '';
+
+// Cache for API results: { query: [photoUrl, ...] }
+const imgCache = {};
+
+async function fetchUnsplashPhotos(query, count = 5) {
+  if (imgCache[query]) return imgCache[query];
+  if (!unsplashKey) return [];
+  try {
+    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=portrait&client_id=${unsplashKey}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    const urls = data.results.map(p => ({
+      regular: p.urls.regular,
+      thumb: p.urls.thumb,
+      small: p.urls.small,
+      alt: p.alt_description || query,
+      credit: p.user.name,
+      link: p.links.html,
+    }));
+    imgCache[query] = urls;
+    return urls;
+  } catch (e) {
+    console.warn('Unsplash fetch failed for', query, e);
+    imgCache[query] = [];
+    return [];
+  }
+}
+
+// ─────────────────────────────────────────────
+// CARD BUILDING
+// ─────────────────────────────────────────────
+
+function buildPlaceholder(style) {
+  // Category emoji map
+  const icons = { formal:'🎩', smart:'👔', casual:'👕', subculture:'🔥', outdoor:'🏔️', leisure:'🌊', alternative:'🎸' };
+  return `
+    <div class="gallery-placeholder">
+      <div class="ph-icon">${icons[style.category] || '👗'}</div>
+      <div class="ph-label">${style.name}</div>
+      <div class="ph-query">${style.imageQueries[0]}</div>
+      ${unsplashKey ? '' : '<div class="ph-key-hint">↑ Add Unsplash key to load images</div>'}
+    </div>`;
+}
+
+function buildCard(style) {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.dataset.category = style.category;
+  card.id = 'card-' + style.id;
+
+  const thumbSlots = style.imageQueries.map((_, i) => `
+    <div class="thumb-slot${i===0?' active':''}" data-idx="${i}" id="thumb-${style.id}-${i}">
+      <div class="thumb-ph"></div>
+    </div>`).join('');
+
+  card.innerHTML = `
+    <div class="card-header"></div>
+    <div class="gallery" id="gallery-${style.id}">
+      <div class="gallery-loading" id="loading-${style.id}"></div>
+      <img class="gallery-main" id="main-${style.id}" data-loaded="false" src="" alt="${style.name} example">
+      ${buildPlaceholder(style)}
+    </div>
+    <div class="gallery-thumbs" id="thumbs-${style.id}">${thumbSlots}</div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="category-badge">${CATEGORIES[style.category]}</span>
+        <span class="card-number">${style.num}</span>
+      </div>
+      <h2>${style.name}</h2>
+      <p class="card-tagline">${style.tagline}</p>
+      <p class="card-description">${style.description}</p>
+      <p class="elements-title">Signature Elements</p>
+      <ul class="elements-list">
+        ${style.elements.map(el => `<li>${el}</li>`).join('')}
+      </ul>
+      <div class="palette">
+        ${style.palette.map((col, i) => `<div class="swatch" style="background:${col}" title="${style.paletteNames[i]}"></div>`).join('')}
+        <span class="palette-names">${style.paletteNames.join(' · ')}</span>
+      </div>
+    </div>`;
+
+  return card;
+}
+
+// Cache of loaded photos per style: { styleId: [ {regular, thumb, ...}, ... ] }
+const stylePhotos = {};
+
+async function loadStyleImages(style) {
+  if (!unsplashKey) return;
+
+  const photos = [];
+  // Fetch first query for 5 results, then supplement with others if needed
+  const results = await fetchUnsplashPhotos(style.imageQueries[0], 5);
+  photos.push(...results.slice(0, 5));
+
+  // Fill gaps from other queries
+  for (let qi = 1; qi < style.imageQueries.length && photos.length < 5; qi++) {
+    const extra = await fetchUnsplashPhotos(style.imageQueries[qi], 2);
+    photos.push(...extra.slice(0, 5 - photos.length));
+  }
+
+  if (photos.length === 0) return;
+  stylePhotos[style.id] = photos;
+
+  // Update main image
+  const mainImg = document.getElementById(`main-${style.id}`);
+  const loadingEl = document.getElementById(`loading-${style.id}`);
+  const placeholder = document.querySelector(`#gallery-${style.id} .gallery-placeholder`);
+
+  if (mainImg) {
+    mainImg.src = photos[0].regular;
+    mainImg.alt = photos[0].alt;
+    mainImg.dataset.loaded = 'loading';
+    mainImg.onload = () => {
+      mainImg.dataset.loaded = 'true';
+      if (loadingEl) loadingEl.classList.add('done');
+      if (placeholder) placeholder.style.display = 'none';
+    };
+    mainImg.onerror = () => {
+      mainImg.dataset.loaded = 'false';
+      if (loadingEl) loadingEl.classList.add('done');
+    };
+    mainImg.addEventListener('click', () => openLightbox(photos[0].regular, style.name + ' — ' + (photos[0].credit || '')));
+  }
+
+  // Update thumbnails
+  photos.forEach((photo, i) => {
+    const slot = document.getElementById(`thumb-${style.id}-${i}`);
+    if (!slot) return;
+    slot.innerHTML = `<img src="${photo.thumb}" alt="${photo.alt}" loading="lazy">`;
+    slot.addEventListener('click', () => switchImage(style.id, i));
+  });
+}
+
+function switchImage(styleId, idx) {
+  const photos = stylePhotos[styleId];
+  if (!photos || !photos[idx]) return;
+  const photo = photos[idx];
+  const mainImg = document.getElementById(`main-${styleId}`);
+  const placeholder = document.querySelector(`#gallery-${styleId} .gallery-placeholder`);
+  if (!mainImg) return;
+
+  mainImg.classList.add('fading');
+  setTimeout(() => {
+    mainImg.src = photo.regular;
+    mainImg.alt = photo.alt;
+    mainImg.classList.remove('fading');
+    if (placeholder) placeholder.style.display = 'none';
+  }, 180);
+
+  // Update thumbnail active state
+  document.querySelectorAll(`#thumbs-${styleId} .thumb-slot`).forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+
+  // Update click to open lightbox
+  mainImg.onclick = () => openLightbox(photo.regular, styleId + ' — ' + (photo.credit || ''));
+}
+
+// ─────────────────────────────────────────────
+// RENDER ALL CARDS
+// ─────────────────────────────────────────────
+function renderAll() {
+  const grid = document.getElementById('grid');
+  STYLES.forEach(style => grid.appendChild(buildCard(style)));
+}
+
+// ─────────────────────────────────────────────
+// LOAD IMAGES (lazy, in batches)
+// ─────────────────────────────────────────────
+function loadAllImages() {
+  if (!unsplashKey) return;
+  // Load in batches of 5 to avoid hammering the API
+  let i = 0;
+  function loadBatch() {
+    const batch = STYLES.slice(i, i + 5);
+    if (batch.length === 0) return;
+    batch.forEach(s => loadStyleImages(s));
+    i += 5;
+    setTimeout(loadBatch, 2000);
+  }
+  loadBatch();
+}
+
+// ─────────────────────────────────────────────
+// API KEY UI
+// ─────────────────────────────────────────────
+const apiKeyInput = document.getElementById('apiKeyInput');
+const apiSaveBtn  = document.getElementById('apiSaveBtn');
+const apiClearBtn = document.getElementById('apiClearBtn');
+const apiStatus   = document.getElementById('apiStatus');
+const apiBanner   = document.getElementById('apiBanner');
+
+function updateKeyUI() {
+  if (unsplashKey) {
+    apiStatus.textContent = '✓ Unsplash key loaded — images loading from API';
+    apiStatus.className = 'api-status ok';
+    apiKeyInput.value = unsplashKey.slice(0, 8) + '…';
+    apiClearBtn.style.display = 'inline-block';
+    apiBanner.classList.add('has-key');
+  } else {
+    apiStatus.textContent = '📷 Add a free Unsplash API key to load real fashion images';
+    apiStatus.className = 'api-status';
+    apiClearBtn.style.display = 'none';
+    apiBanner.classList.remove('has-key');
+  }
+}
+
+apiSaveBtn.addEventListener('click', () => {
+  const val = apiKeyInput.value.trim().replace(/….*/, '');
+  if (!val || val.length < 8) { apiStatus.textContent = '⚠ Please paste a valid Unsplash Access Key'; return; }
+  unsplashKey = val;
+  localStorage.setItem(LS_KEY, unsplashKey);
+  updateKeyUI();
+  loadAllImages();
+});
+
+apiClearBtn.addEventListener('click', () => {
+  unsplashKey = '';
+  localStorage.removeItem(LS_KEY);
+  apiKeyInput.value = '';
+  updateKeyUI();
+  // Reset all cards to placeholder state
+  document.querySelectorAll('.gallery-main').forEach(img => {
+    img.src = ''; img.dataset.loaded = 'false';
+  });
+  document.querySelectorAll('.gallery-loading').forEach(el => el.classList.remove('done'));
+  document.querySelectorAll('.gallery-placeholder').forEach(el => el.style.display = '');
+});
+
+apiKeyInput.addEventListener('keydown', e => { if (e.key === 'Enter') apiSaveBtn.click(); });
+
+// ─────────────────────────────────────────────
+// FILTER
+// ─────────────────────────────────────────────
+function applyFilter(filter) {
+  let visible = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const show = filter === 'all' || card.dataset.category === filter;
+    card.dataset.hidden = show ? 'false' : 'true';
+    if (show) visible++;
+  });
+  document.getElementById('countBar').textContent =
+    filter === 'all'
+      ? `Showing all ${visible} styles`
+      : `Showing ${visible} ${CATEGORIES[filter]} style${visible !== 1 ? 's' : ''}`;
+}
+
+document.getElementById('filterBar').addEventListener('click', e => {
+  if (!e.target.matches('.filter-btn')) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  applyFilter(e.target.dataset.filter);
+});
+
+// ─────────────────────────────────────────────
+// LIGHTBOX
+// ─────────────────────────────────────────────
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCaption = document.getElementById('lightboxCaption');
+
+function openLightbox(src, caption) {
+  lightboxImg.src = src;
+  lightboxCaption.textContent = caption ? 'Photo: ' + caption + ' via Unsplash' : '';
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderAll();
+updateKeyUI();
+if (unsplashKey) loadAllImages();
+</script>
+</body>
+</html>
