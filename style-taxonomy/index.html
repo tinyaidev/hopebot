@@ -136,11 +136,14 @@
       align-items: center; justify-content: center; gap: 10px;
       background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
       color: #555; font-size: 12px; text-align: center; padding: 20px;
+      text-decoration: none; cursor: pointer;
+      transition: background 0.2s;
     }
-    .gallery-placeholder .ph-icon { font-size: 32px; opacity: 0.35; }
-    .gallery-placeholder .ph-label { font-size: 13px; font-weight: 500; color: #888; letter-spacing: 0.05em; }
-    .gallery-placeholder .ph-query { font-size: 10px; color: #444; font-style: italic; max-width: 240px; line-height: 1.5; }
-    .gallery-placeholder .ph-key-hint { font-size: 10px; color: #c8b89a; margin-top: 4px; }
+    .gallery-placeholder:hover { background: linear-gradient(135deg, #222 0%, #333 100%); }
+    .gallery-placeholder .ph-icon { font-size: 32px; opacity: 0.5; }
+    .gallery-placeholder .ph-label { font-size: 14px; font-weight: 600; color: #aaa; letter-spacing: 0.04em; }
+    .gallery-placeholder .ph-cta { font-size: 11px; color: #c8b89a; background: rgba(200,184,154,0.12); border: 1px solid rgba(200,184,154,0.3); border-radius: 4px; padding: 4px 10px; margin-top: 2px; }
+    .gallery-placeholder .ph-cta-sub { font-size: 10px; color: #444; margin-top: 2px; }
     .gallery-main[data-loaded="false"] + .gallery-placeholder,
     .gallery-main[data-loaded="hidden"] { display: none; }
     .gallery-main[data-loaded="false"] { display: none; }
@@ -211,7 +214,7 @@
   <p class="hero-eyebrow">A visual reference</p>
   <h1>Men's <em>Style</em> Taxonomy</h1>
   <p>Twenty distinct aesthetic territories in menswear — from strict formal codes to countercultural uniforms — with the key design signals that define each one.</p>
-  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 curated images each &nbsp;·&nbsp; From black tie to gorpcore</p>
+  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 images each via Unsplash search &nbsp;·&nbsp; From black tie to gorpcore</p>
 </header>
 
 <!-- API Key Banner -->
@@ -616,15 +619,16 @@ async function fetchUnsplashPhotos(query, count = 5) {
 // ─────────────────────────────────────────────
 
 function buildPlaceholder(style) {
-  // Category emoji map
   const icons = { formal:'🎩', smart:'👔', casual:'👕', subculture:'🔥', outdoor:'🏔️', leisure:'🌊', alternative:'🎸' };
+  const q = encodeURIComponent(style.imageQueries[0] + ' men fashion');
+  const href = `https://www.google.com/search?q=${q}&tbm=isch`;
   return `
-    <div class="gallery-placeholder">
+    <a class="gallery-placeholder" href="${href}" target="_blank" rel="noopener">
       <div class="ph-icon">${icons[style.category] || '👗'}</div>
       <div class="ph-label">${style.name}</div>
-      <div class="ph-query">${style.imageQueries[0]}</div>
-      ${unsplashKey ? '' : '<div class="ph-key-hint">↑ Add Unsplash key to load images</div>'}
-    </div>`;
+      <div class="ph-cta">🔍 Browse on Google Images</div>
+      <div class="ph-cta-sub">or add Unsplash key above for inline images</div>
+    </a>`;
 }
 
 function buildCard(style) {
@@ -699,11 +703,12 @@ async function loadStyleImages(style) {
     mainImg.onload = () => {
       mainImg.dataset.loaded = 'true';
       if (loadingEl) loadingEl.classList.add('done');
-      if (placeholder) placeholder.style.display = 'none';
+      if (placeholder) { placeholder.style.display = 'none'; placeholder.style.pointerEvents = 'none'; }
     };
     mainImg.onerror = () => {
       mainImg.dataset.loaded = 'false';
       if (loadingEl) loadingEl.classList.add('done');
+      if (placeholder) { placeholder.style.display = ''; placeholder.style.pointerEvents = ''; }
     };
     mainImg.addEventListener('click', () => openLightbox(photos[0].regular, style.name + ' — ' + (photos[0].credit || '')));
   }
