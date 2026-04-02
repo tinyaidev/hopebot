@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architectural Styles Taxonomy</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f6f5f2;
+      --card-bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --border: #e4e0da;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.13);
+      --radius: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --ancient:      #5C3A1A;
+      --classical:    #4A1A2E;
+      --arts-era:     #2A4A2E;
+      --modernist:    #1A2E4A;
+      --late-modern:  #1A3A3A;
+      --contemporary: #2A2A3A;
+      --cultural:     #4A2A1A;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* ── HERO ── */
+    .hero { background: #0d0d0d; color: #f5f3ef; padding: 72px 32px 56px; text-align: center; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #888; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px; }
+    .hero h1 em { font-style: normal; color: #c8b89a; }
+    .hero p { max-width: 560px; margin: 0 auto; color: #aaa; font-size: 1.05rem; }
+    .hero-meta { margin-top: 24px; font-size: 12px; color: #555; letter-spacing: 0.05em; }
+
+    /* ── FILTERS ── */
+    .filter-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(246,245,242,0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; gap: 4px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0; padding: 13px 16px; border: none; background: none; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--text-muted); white-space: nowrap;
+      border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+    }
+    .filter-btn:hover { color: var(--text); }
+    .filter-btn.active { color: var(--text); border-bottom-color: var(--text); }
+
+    .count-bar { max-width: 1400px; margin: 0 auto; padding: 18px 24px 4px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+
+    /* ── GRID ── */
+    .grid { max-width: 1400px; margin: 0 auto; padding: 16px 24px 80px; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 28px; }
+
+    /* ── CARD ── */
+    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+    .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .card[data-hidden="true"] { display: none; }
+
+    .card-header { height: 4px; }
+    .card[data-category="ancient"]      .card-header { background: var(--ancient); }
+    .card[data-category="classical"]    .card-header { background: var(--classical); }
+    .card[data-category="arts-era"]     .card-header { background: var(--arts-era); }
+    .card[data-category="modernist"]    .card-header { background: var(--modernist); }
+    .card[data-category="late-modern"]  .card-header { background: var(--late-modern); }
+    .card[data-category="contemporary"] .card-header { background: var(--contemporary); }
+    .card[data-category="cultural"]     .card-header { background: var(--cultural); }
+
+    /* ── GALLERY ── */
+    .gallery { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #111; cursor: pointer; }
+    .gallery-main { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.35s, transform 0.3s; }
+    .gallery:hover .gallery-main { transform: scale(1.02); }
+    .gallery-main.fading { opacity: 0; }
+
+    .gallery-placeholder {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      color: #555; font-size: 12px; text-align: center; padding: 20px;
+      text-decoration: none; cursor: default;
+    }
+    .gallery-placeholder .ph-icon { font-size: 32px; opacity: 0.5; }
+    .gallery-placeholder .ph-label { font-size: 14px; font-weight: 600; color: #aaa; letter-spacing: 0.04em; }
+    .gallery-main[data-loaded="false"] + .gallery-placeholder,
+    .gallery-main[data-loaded="hidden"] { display: none; }
+    .gallery-main[data-loaded="false"] { display: none; }
+
+    .gallery-loading { position: absolute; inset: 0; background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .gallery-loading.done { display: none; }
+
+    .gallery-thumbs { display: flex; gap: 3px; padding: 3px; background: #eceae4; }
+    .thumb-slot { flex: 1; aspect-ratio: 1; border-radius: 3px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
+    .thumb-slot.active { border-color: #333; }
+    .thumb-slot img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.65; transition: opacity 0.15s; }
+    .thumb-slot:hover img, .thumb-slot.active img { opacity: 1; }
+    .thumb-slot .thumb-ph { width: 100%; height: 100%; background: #ddd; }
+
+    /* ── CARD BODY ── */
+    .card-body { padding: 22px 22px 20px; }
+    .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .category-badge {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 20px; color: #fff;
+    }
+    .card[data-category="ancient"]      .category-badge { background: var(--ancient); }
+    .card[data-category="classical"]    .category-badge { background: var(--classical); }
+    .card[data-category="arts-era"]     .category-badge { background: var(--arts-era); }
+    .card[data-category="modernist"]    .category-badge { background: var(--modernist); }
+    .card[data-category="late-modern"]  .category-badge { background: var(--late-modern); }
+    .card[data-category="contemporary"] .category-badge { background: var(--contemporary); }
+    .card[data-category="cultural"]     .category-badge { background: var(--cultural); }
+    .card-number { font-size: 11px; color: #bbb; font-weight: 500; }
+    .card h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .card-tagline { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 14px; }
+    .card-description { font-size: 0.875rem; color: #3a3a3a; line-height: 1.7; margin-bottom: 18px; }
+    .elements-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .elements-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .elements-list li { font-size: 12.5px; color: #444; padding-left: 16px; position: relative; line-height: 1.5; }
+    .elements-list li::before { content: '—'; position: absolute; left: 0; color: #bbb; }
+
+    .palette { display: flex; gap: 6px; margin-top: 16px; align-items: center; }
+    .swatch { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid rgba(0,0,0,0.08); flex-shrink: 0; }
+    .palette-names { font-size: 10px; color: #aaa; margin-left: 6px; flex: 1; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.93); align-items: center; justify-content: center; padding: 20px; }
+    .lightbox.open { display: flex; }
+    .lightbox-img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 6px; }
+    .lightbox-close { position: absolute; top: 16px; right: 20px; color: #fff; font-size: 28px; cursor: pointer; background: none; border: none; opacity: 0.7; transition: opacity 0.15s; }
+    .lightbox-close:hover { opacity: 1; }
+    .lightbox-caption { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #aaa; font-size: 12px; white-space: nowrap; }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; padding: 12px 12px 60px; gap: 20px; }
+      .hero { padding: 48px 20px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="hero-eyebrow">A visual reference</p>
+  <h1>Architectural <em>Styles</em> Taxonomy</h1>
+  <p>Twenty distinct architectural movements — from ancient Greek temples to parametric computation — with the defining structural principles and visual signals of each.</p>
+  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 images each &nbsp;·&nbsp; From antiquity to the present</p>
+</header>
+
+<nav class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all">All&nbsp;(20)</button>
+  <button class="filter-btn" data-filter="ancient">Ancient&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="classical">Classical&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="arts-era">Arts&nbsp;Era&nbsp;(2)</button>
+  <button class="filter-btn" data-filter="modernist">Modernist&nbsp;(5)</button>
+  <button class="filter-btn" data-filter="late-modern">Late&nbsp;Modern&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="contemporary">Contemporary&nbsp;(2)</button>
+  <button class="filter-btn" data-filter="cultural">Cultural&nbsp;(2)</button>
+</nav>
+
+<div class="count-bar" id="countBar">Showing all 20 styles</div>
+<main class="grid" id="grid"></main>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&#x2715;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<footer>
+  <p>Built with hopebot</p>
+</footer>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const CATEGORIES = {
+  ancient:'Ancient', classical:'Classical', 'arts-era':'Arts Era',
+  modernist:'Modernist', 'late-modern':'Late Modern',
+  contemporary:'Contemporary', cultural:'Cultural',
+};
+
+const IMAGE_MANIFEST = {"greek-classical":["images/greek-classical/1.jpg","images/greek-classical/2.jpg","images/greek-classical/3.jpg","images/greek-classical/4.jpg","images/greek-classical/5.jpg"],"romanesque":["images/romanesque/1.jpg","images/romanesque/2.jpg","images/romanesque/3.jpg","images/romanesque/4.jpg","images/romanesque/5.jpg"],"gothic":["images/gothic/1.jpg","images/gothic/2.jpg","images/gothic/3.jpg","images/gothic/4.jpg","images/gothic/5.jpg"],"renaissance":["images/renaissance/1.jpg","images/renaissance/2.jpg","images/renaissance/3.jpg","images/renaissance/4.jpg","images/renaissance/5.jpg"],"baroque":["images/baroque/1.jpg","images/baroque/2.jpg","images/baroque/3.jpg","images/baroque/4.jpg","images/baroque/5.jpg"],"neoclassical":["images/neoclassical/1.jpg","images/neoclassical/2.jpg","images/neoclassical/3.jpg","images/neoclassical/4.jpg","images/neoclassical/5.jpg"],"art-nouveau":["images/art-nouveau/1.jpg","images/art-nouveau/2.jpg","images/art-nouveau/3.jpg","images/art-nouveau/4.webp","images/art-nouveau/5.jpg"],"art-deco":["images/art-deco/1.jpg","images/art-deco/2.jpg","images/art-deco/3.jpg","images/art-deco/4.jpg","images/art-deco/5.jpg"],"bauhaus":["images/bauhaus/1.jpg","images/bauhaus/2.jpg","images/bauhaus/3.jpg","images/bauhaus/4.jpg","images/bauhaus/5.jpg"],"international-style":["images/international-style/1.jpg","images/international-style/2.jpg","images/international-style/3.jpg","images/international-style/4.jpg","images/international-style/5.jpg"],"brutalism":["images/brutalism/1.jpg","images/brutalism/2.jpg","images/brutalism/3.jpg","images/brutalism/4.jpg","images/brutalism/5.jpg"],"organic-prairie":["images/organic-prairie/1.jpg","images/organic-prairie/2.jpg","images/organic-prairie/3.jpg","images/organic-prairie/4.jpg","images/organic-prairie/5.jpg"],"mid-century-modern":["images/mid-century-modern/1.jpg","images/mid-century-modern/2.jpg","images/mid-century-modern/3.jpg","images/mid-century-modern/4.jpg","images/mid-century-modern/5.jpg"],"high-tech":["images/high-tech/1.jpg","images/high-tech/2.jpg","images/high-tech/3.jpg","images/high-tech/4.jpg","images/high-tech/5.jpg"],"postmodernism":["images/postmodernism/1.jpg","images/postmodernism/2.jpg","images/postmodernism/3.jpg","images/postmodernism/4.jpg","images/postmodernism/5.jpg"],"deconstructivism":["images/deconstructivism/1.jpg","images/deconstructivism/2.jpg","images/deconstructivism/3.jpg","images/deconstructivism/4.jpg","images/deconstructivism/5.jpg"],"parametric":["images/parametric/1.jpg","images/parametric/2.jpg","images/parametric/3.jpg","images/parametric/4.jpg","images/parametric/5.jpg"],"minimalism-arch":["images/minimalism-arch/1.jpg","images/minimalism-arch/2.jpg","images/minimalism-arch/3.jpg","images/minimalism-arch/4.jpg","images/minimalism-arch/5.jpg"],"japanese-traditional":["images/japanese-traditional/1.jpg","images/japanese-traditional/2.jpg","images/japanese-traditional/3.jpg","images/japanese-traditional/4.jpg","images/japanese-traditional/5.jpg"],"islamic-moorish":["images/islamic-moorish/1.jpg","images/islamic-moorish/2.jpg","images/islamic-moorish/3.jpg","images/islamic-moorish/4.jpg","images/islamic-moorish/5.jpg"]};
+
+const STYLES = [
+
+  // ── ANCIENT ──
+  {
+    id:'greek-classical', num:'01', name:'Greek Classical', tagline:'Geometry, proportion, and the birth of Western form', category:'ancient',
+    description:'Greek Classical architecture, reaching its peak in 5th century BC Athens, established the proportional vocabulary that Western architecture would return to for over two millennia. It is the architecture of rational order — a philosophical project made physical. Every column, entablature, and pediment is governed by precise ratios, and the result is a built environment that seems both inevitable and ideal. The Parthenon achieves something almost impossible: perfection that still feels alive.',
+    elements:[
+      'Three orders: Doric (plain capitals), Ionic (scroll capitals), Corinthian (acanthus capitals)',
+      'Peristyle colonnades surrounding a rectangular cella (inner chamber)',
+      'Entablature composed of architrave, frieze, and cornice',
+      'Shallow triangular pediments at gable ends, often sculpted',
+      'Optical refinements: column entasis (slight bulge), stylobate curvature',
+      'Pure white marble, though originally painted in vivid pigments',
+    ],
+    palette:['#F5F0E8','#D4C8A8','#8B7B5E','#5A4A3A','#2A1F14'],
+    paletteNames:['Marble white','Limestone','Ochre','Umber','Shadow'],
+  },
+  {
+    id:'romanesque', num:'02', name:'Romanesque', tagline:'Mass and mystery in stone', category:'ancient',
+    description:'Romanesque architecture, flourishing across Europe from roughly 1000–1200 AD, is the architecture of weight and enclosure. Where Greek temples reach upward in elegant colonnade, Romanesque buildings press inward — thick walls, small windows, dark interiors pierced by filtered light. The round arch is its primary signature, appearing in doorways, windows, arcades, and vaults. Its solemn massiveness creates a particular atmosphere of sacred gravity that later Gothic lightness would deliberately transcend.',
+    elements:[
+      'Massive load-bearing walls of rubble or cut stone, often several feet thick',
+      'Round-headed arches for doorways, windows, and interior arcades',
+      'Barrel vaults and groin vaults replacing flat timber ceilings',
+      'Short, thick columns with carved capitals, often historiated',
+      'Blind arcading used as wall decoration',
+      'Sturdy square or cylindrical towers flanking facades and crossings',
+    ],
+    palette:['#8B7355','#6B5A44','#4A3A2A','#2E2318','#C4B49A'],
+    paletteNames:['Sandstone','Limestone','Walnut stone','Dark shadow','Parchment'],
+  },
+  {
+    id:'gothic', num:'03', name:'Gothic', tagline:'Stone made weightless, light made sacred', category:'ancient',
+    description:'Gothic architecture is an engineering achievement in the service of transcendence. Beginning in 12th-century France, it solved the structural problem of Romanesque with three innovations — the pointed arch, the ribbed vault, and the flying buttress — which together allowed walls to dissolve into glass. The resulting cathedrals are perhaps the most ambitious buildings ever constructed: structures that took generations to build and pushed medieval technology to its absolute limit in pursuit of a heaven-pointing verticality.',
+    elements:[
+      'Pointed arches replacing the round Romanesque arch throughout',
+      'Ribbed vaulting distributing roof thrust to specific pier points',
+      'Flying buttresses — external arched props that carry lateral thrust away from walls',
+      'Enormous stained-glass window walls, especially rose windows',
+      'Soaring vertical nave proportions, emphasizing height over width',
+      'Elaborate sculptural portals; gargoyles functioning as decorative waterspouts',
+    ],
+    palette:['#2A2A3A','#4A4A6A','#8A6A9A','#C8A850','#F0E8D0'],
+    paletteNames:['Stone shadow','Slate','Violet glass','Gold leaf','Limestone'],
+  },
+
+  // ── CLASSICAL ──
+  {
+    id:'renaissance', num:'04', name:'Renaissance', tagline:'Antiquity reborn in humanist geometry', category:'classical',
+    description:'Renaissance architecture, originating in 15th-century Florence, was a deliberate act of cultural recovery: architects like Brunelleschi and Alberti studied ancient Roman ruins and developed a new classical language adapted for Christian Europe. The Renaissance building is a legible object — symmetrical, proportioned by mathematics, composed around a clear central axis. Where Gothic reached heavenward in passionate irrationality, the Renaissance building stands firmly on the earth, its proportions derived from the human body rather than divine mystery.',
+    elements:[
+      'Symmetrical facades with clearly defined horizontal registers',
+      'Round arches and hemispherical domes derived from Roman precedents',
+      'Pilasters (flat engaged columns) as primary facade articulation',
+      'Rusticated stone bases giving visual weight to ground floors',
+      'Cortile (internal courtyard) as the social and spatial heart of palaces',
+      'Mathematical perspective deployed as both design tool and aesthetic value',
+    ],
+    palette:['#D4C8A8','#B8A880','#8B7355','#5A4A3A','#3A2E24'],
+    paletteNames:['Pale stone','Travertine','Siena stone','Umber','Shadow'],
+  },
+  {
+    id:'baroque', num:'05', name:'Baroque', tagline:'Drama, movement, and theatrical grandeur', category:'classical',
+    description:'Baroque architecture is the architecture of power and persuasion. Developed in 17th-century Rome as a tool of Counter-Reformation propaganda, it mobilises every means at architecture\'s disposal — light, shadow, surface, geometry, painting, and sculpture — into a unified experience designed to overwhelm the senses and move the emotions. Where Renaissance architecture achieves calm rational clarity, Baroque deliberately introduces tension: curved walls, undulating facades, dramatic internal lighting, and an intoxicating abundance of ornament.',
+    elements:[
+      'Curved and undulating facades — concave/convex surfaces creating dynamic movement',
+      'Bold broken pediments and cartouches replacing classical restraint',
+      'Dramatic chiaroscuro: high, hidden light sources flooding interiors from above',
+      'Trompe-l\'oeil ceiling frescoes dissolving architecture into painted sky',
+      'Giant orders of columns and pilasters spanning multiple storeys',
+      'Elliptical and oval plan forms, especially in churches and chapels',
+    ],
+    palette:['#F5E8C8','#D4A84A','#8B5A2A','#4A2E18','#2A1810'],
+    paletteNames:['Gilded ivory','Gold','Sienna','Dark walnut','Shadow'],
+  },
+  {
+    id:'neoclassical', num:'06', name:'Neoclassical', tagline:'Order, reason, and civic dignity', category:'classical',
+    description:'Neoclassicism emerged in the late 18th century as a reaction against Baroque excess — a return to rational Greek and Roman forms in the spirit of Enlightenment philosophy. It is architecture for institutions: the bank, the court, the parliament, the museum. Its colonnaded porticos, pediments, and symmetrical massing communicate permanence, authority, and the rule of reason. When Washington DC\'s founding architects wanted to build a republic worthy of history, they built in Neoclassical. The style\'s power is inseparable from its associations.',
+    elements:[
+      'Monumental colonnaded porticos, typically Greek temple fronts',
+      'Strict bilateral symmetry in plan and facade',
+      'Flat or very low-pitched roofs often concealed behind balustrades',
+      'Unornamented planar wall surfaces contrasting with columnar features',
+      'Rusticated basements providing a formal podium for the main block',
+      'Shallow relief sculpture confined to pediment tympana and friezes',
+    ],
+    palette:['#F0EDE5','#D4CCBC','#A09080','#6A5A50','#3A2E28'],
+    paletteNames:['Portland stone','Limestone','Warm grey','Slate','Shadow'],
+  },
+
+  // ── ARTS ERA ──
+  {
+    id:'art-nouveau', num:'07', name:'Art Nouveau', tagline:'Nature\'s curves translated into stone and steel', category:'arts-era',
+    description:'Art Nouveau (1890–1910) was a wholesale rejection of historical revivalism — an attempt to create a genuinely new architecture rooted in natural form rather than classical precedent. Its practitioners saw the geometry of the crystal, the vine, the dragonfly\'s wing as a living structural logic waiting to be translated into iron, stone, and glass. Gaudí in Barcelona, Guimard in Paris, Horta in Brussels: each pushed the style toward something different, but all shared the conviction that beauty was inseparable from organic growth.',
+    elements:[
+      'Flowing, asymmetric lines derived from plant forms — stems, vines, waves',
+      'Structural ironwork deliberately expressed and ornamented (Metro entrances)',
+      'Elaborate facade ornament integrating flora, fauna, and the female form',
+      'Stained glass in organic, non-geometric compositions',
+      'Whiplash curves in everything: ironwork, tile, mosaic, furniture',
+      'Unity of all building elements — architecture treated as a total work of art',
+    ],
+    palette:['#4A6A3A','#8A7A5A','#C4A86A','#D4C4A0','#F0EAD8'],
+    paletteNames:['Sage green','Olive','Ochre gold','Cream stone','Parchment'],
+  },
+  {
+    id:'art-deco', num:'08', name:'Art Deco', tagline:'Modernity\'s glamour in geometric ornament', category:'arts-era',
+    description:'Art Deco (1920s–40s) captured the optimism of the Machine Age with a style that was simultaneously modern and luxurious. Where Art Nouveau flowed with organic curves, Art Deco crystallised into sharp geometry — stepped setbacks, sunburst motifs, chevrons, and zigzags. The skyscrapers of New York (Chrysler, Empire State) are its apotheosis: buildings that celebrated vertical ambition with metallic skin, ornamental crowns, and a silhouette that looked like the future. It was the last architectural style that everyone could agree was beautiful.',
+    elements:[
+      'Geometric and angular ornament: chevrons, zigzags, sunburst patterns',
+      'Stepped pyramid massing — setback towers tapering as they rise',
+      'Rich materials: polished chrome, brass, black marble, exotic woods',
+      'Stylised figurative relief sculpture on facades and lobbies',
+      'Bold lettering and signage integrated into the architectural composition',
+      'Streamlined horizontal emphasis in later Streamline Moderne variant',
+    ],
+    palette:['#1A1A2A','#2A2A4A','#C8A840','#D4C060','#F5E8C0'],
+    paletteNames:['Noir black','Midnight','Antique gold','Champagne','Ivory'],
+  },
+
+  // ── MODERNIST ──
+  {
+    id:'bauhaus', num:'09', name:'Bauhaus', tagline:'Form follows function, beauty follows both', category:'modernist',
+    description:'The Bauhaus school (1919–1933) created the foundation of modern design education and the visual language of 20th-century architecture. Its core proposition — that craft, fine art, and industrial production should be unified — produced buildings stripped of ornament, where function and material were allowed to speak directly. The Bauhaus building in Dessau, designed by Gropius in 1926, remains the movement\'s clearest statement: glass curtain walls revealing the building\'s structure, flat roofs, and a clean cubic geometry that felt like a manifesto in built form.',
+    elements:[
+      'Flat roofs and planar white or light-coloured wall surfaces',
+      'Large industrial glazing: glass curtain walls, ribbon windows',
+      'Cubic, rectangular geometric volumes with no applied ornament',
+      'Honest expression of structural elements — steel, concrete, glass',
+      'Functional layout determining form: plan drives section drives elevation',
+      'Primary colours as accent; otherwise white, grey, and black',
+    ],
+    palette:['#F5F5F5','#D0D0D0','#C82020','#2020C8','#F0D020'],
+    paletteNames:['White','Light grey','Primary red','Primary blue','Primary yellow'],
+  },
+  {
+    id:'international-style', num:'10', name:'International Style', tagline:'Glass, steel, and the universal grid', category:'modernist',
+    description:'The International Style, named in 1932 by Philip Johnson and Henry-Russell Hitchcock, was the globalised offspring of European Modernism. Its three principles — volume over mass, regularity over symmetry, no applied ornament — produced a building type that could appear in New York, Tokyo, or Dubai without modification. This was both its revolutionary ambition and its limitation. Mies van der Rohe\'s Seagram Building (1958) is the style\'s culmination: a steel-and-bronze tower of almost metaphysical precision, whose proportions and detailing set a standard for corporate architecture for a generation.',
+    elements:[
+      'Steel or concrete structural frame as primary formal element',
+      'Glass curtain wall: non-load-bearing skin suspended from the frame',
+      'Open floor plans freed from structural walls',
+      'Pilotis (pillar-legs) raising the building off the ground plane',
+      'Flat roof, often with rooftop garden (Le Corbusier\'s Five Points)',
+      'No ornament; beauty through precision of proportion and material',
+    ],
+    palette:['#E8E8E8','#9A9A9A','#4A4A4A','#1A1A1A','#8A7A5A'],
+    paletteNames:['White curtain wall','Silver steel','Charcoal','Black frame','Bronze'],
+  },
+  {
+    id:'brutalism', num:'11', name:'Brutalism', tagline:'Concrete exposed, power made visible', category:'modernist',
+    description:'Brutalism (1950s–1970s) takes its name not from brutality but from béton brut — raw concrete, as Le Corbusier called it. It was architecture of social ambition: public housing, universities, civic centres built for a generation that believed collective institutions could transform society. The aesthetic is honest to the point of aggression — concrete poured in board-formed textures, structural logic made a visual spectacle, mass and shadow used expressively. Its revival in critical esteem reflects recognition that this was one of the last moments when civic architecture dared to be monumental.',
+    elements:[
+      'Board-formed or bush-hammered raw concrete as primary finish',
+      'Massive sculptural forms: overhangs, cantilevered blocks, bridge-like spans',
+      'Inward-looking megastructures with street-level activities elevated',
+      'Repetitive modular unit (windows, balconies) aggregated at monumental scale',
+      'Exposed structural honesty: columns, shear walls, and cores all visible',
+      'Heroic civic scale; buildings designed as statements of collective purpose',
+    ],
+    palette:['#8A8A8A','#6A6A6A','#4A4A4A','#2A2A2A','#C4B49A'],
+    paletteNames:['Raw concrete','Textured grey','Dark concrete','Shadow','Weathered stone'],
+  },
+  {
+    id:'organic-prairie', num:'12', name:'Organic / Prairie Style', tagline:'Architecture rooted in the landscape', category:'modernist',
+    description:'Frank Lloyd Wright\'s Prairie Style (1900–1920s) rejected the European box in favour of a building that grew from the American Midwest landscape — horizontal, earth-hugging, rooted. Its wide overhanging eaves, bands of art-glass windows, and integration with the natural site produced a new domestic architecture that felt indigenous rather than imported. Wright\'s broader concept of organic architecture — that a building should grow from its site as a tree grows from the soil — influenced everything from Richard Neutra\'s California houses to Jørn Utzon\'s Sydney Opera House.',
+    elements:[
+      'Dominant horizontal emphasis: low profiles, wide overhanging eaves',
+      'Central hearth and chimney as the social and thermal heart',
+      'Continuous bands of art-glass windows breaking the wall plane',
+      'Integration with site: terraces, gardens, and landscape as designed elements',
+      'Natural materials — brick, wood, stone — used with textural honesty',
+      'Open plan interior with spaces flowing into each other without corridors',
+    ],
+    palette:['#8B6A3A','#C4A878','#D4C4A0','#8B9A6A','#4A5A3A'],
+    paletteNames:['Prairie brick','Warm stone','Sand','Sage','Forest green'],
+  },
+  {
+    id:'mid-century-modern', num:'13', name:'Mid-Century Modern', tagline:'Optimism, openness, and the American dream of space', category:'modernist',
+    description:'Mid-Century Modern (roughly 1945–1970) brought Modernist principles into suburban American life with a warmth that the International Style often lacked. The California Case Study houses, the Eichler developments, and Neutra\'s residential work combined flat or butterfly roofs, floor-to-ceiling glass, and open plans with natural materials — teak, walnut, brick — that humanised the machine aesthetic. The result felt less like a manifesto and more like a lifestyle: the seamless indoor-outdoor living, the built-in furniture, the clean lines promising a future of elegant ease.',
+    elements:[
+      'Flat or low-pitched gabled/butterfly roofs, often with deep overhangs',
+      'Expansive floor-to-ceiling glazing opening onto terraces and gardens',
+      'Open floor plans with kitchen, living, and dining flowing together',
+      'Post-and-beam structural expression: visible ceiling beams and roof decking',
+      'Natural material palette: teak, walnut, stone, brick alongside white plaster',
+      'Indoor-outdoor connection as primary spatial concept',
+    ],
+    palette:['#D4A86A','#A88050','#8B9A6A','#4A5A3A','#2A3A2A'],
+    paletteNames:['Warm teak','Walnut','Avocado','Forest','Dark green'],
+  },
+
+  // ── LATE MODERN ──
+  {
+    id:'high-tech', num:'14', name:'High-Tech / Structural Expressionism', tagline:'Services celebrated, structure made spectacle', category:'late-modern',
+    description:'High-Tech architecture (1970s–90s), sometimes called Structural Expressionism, inverted the traditional hierarchy of building elements by deliberately expressing everything that conventional architecture hides: structure, services, circulation. Richard Rogers and Renzo Piano\'s Pompidou Centre (1977) put escalators, ducts, and structural members on the outside in primary colours, making the building\'s infrastructure its ornament. Norman Foster\'s HSBC Hong Kong (1985) suspended the office floors from external masts. The style celebrates engineering as a form of beauty, and technology as a legitimate aesthetic language.',
+    elements:[
+      'Structural elements displayed externally: trusses, masts, tension rods',
+      'Mechanical services (ducts, pipes, lifts) colour-coded and exposed',
+      'Long-span structural systems enabling column-free interior floors',
+      'Maximum transparency through glass curtain walls and structural glazing',
+      'Industrial materials: stainless steel, aluminium, high-performance glass',
+      'Prefabricated, precision-engineered components with visible jointing',
+    ],
+    palette:['#E8E8E8','#4A9A4A','#C84A2A','#2A6AC8','#F0D020'],
+    paletteNames:['Steel grey','Systems green','Services red','Circulation blue','Warning yellow'],
+  },
+  {
+    id:'postmodernism', num:'15', name:'Postmodernism', tagline:'History as quotation, ornament as communication', category:'late-modern',
+    description:'Postmodern architecture (1970s–90s) was a direct polemic against the perceived austerity and cultural disconnection of International Style Modernism. Robert Venturi\'s manifesto Complexity and Contradiction in Architecture (1966) argued for a richness and ambiguity that Modernism had expunged; Learning from Las Vegas championed the decorated shed over the duck. The result was architecture that quoted freely from history — pediments, columns, keystones — while treating these references as knowing cultural symbols rather than functional elements. At its best it was witty; at its worst, kitsch.',
+    elements:[
+      'Historical references applied ornamentally: broken pediments, keystones, columns',
+      'Bright, often clashing colour schemes departing from Modernist neutrality',
+      'Oversized, cartoonish classical details deployed at monumental scale',
+      'Contextual gestures: facade materials and forms responding to neighbourhood',
+      'Symbolic and representational elements — buildings that communicate a "meaning"',
+      'Hybrid stylistic collages mixing classicism, vernacular, and modern construction',
+    ],
+    palette:['#D45A2A','#C8A040','#3A7A8A','#8A3A8A','#F0E8D0'],
+    paletteNames:['Terracotta','Honey gold','Teal','Mauve','Cream'],
+  },
+  {
+    id:'deconstructivism', num:'16', name:'Deconstructivism', tagline:'Fragmentation as architecture\'s honest condition', category:'late-modern',
+    description:'Deconstructivism, crystallised at a 1988 MoMA exhibition, applied the philosophical idea of deconstruction to architectural form. If Derrida argued that texts undermine their own stable meanings, deconstructivist architects argued that buildings need not resolve into stable, coherent geometries. Gehry\'s Guggenheim Bilbao (1997), Zaha Hadid\'s Vitra Fire Station, and Libeskind\'s Jewish Museum Berlin all deploy fragmented, colliding, tilting planes that create disorientation as architectural experience. The style coincided with new CAD tools that made complex geometries buildable for the first time.',
+    elements:[
+      'Non-orthogonal geometries: tilted walls, angled floors, colliding volumes',
+      'Fragmentation and incompleteness as deliberate compositional strategies',
+      'Warped or folded surfaces in metal, glass, or concrete',
+      'Spatial disorientation used as an expressive tool',
+      'Titanium, stainless steel cladding following complex curved forms',
+      'Drawings and models as independent architectural objects in their own right',
+    ],
+    palette:['#8A9A9A','#6A7A8A','#4A5A6A','#C8C0B0','#3A3A4A'],
+    paletteNames:['Titanium silver','Slate','Dark steel','Warm grey','Shadow'],
+  },
+
+  // ── CONTEMPORARY ──
+  {
+    id:'parametric', num:'17', name:'Parametric / Computational', tagline:'Algorithm as architect, complexity without contradiction', category:'contemporary',
+    description:'Parametric and computational architecture uses algorithmic design tools to generate forms of complexity impossible to conceive by hand. Whereas Deconstructivism achieved fragmentation through intuition and individual genius, parametric design achieves organic complexity through systematic rule-generation: a facade might be defined by a mathematical function responsive to sunlight, wind, or structural loads. Zaha Hadid Architects\' work after 2000, the Beijing National Aquatics Centre\'s Weaire-Phelan foam structure, and the proliferating scripted facades of contemporary supertalls all belong to this moment — architecture as a branch of computational mathematics.',
+    elements:[
+      'Complex double-curved surfaces generated by parametric scripts (NURBS, meshes)',
+      'Structural systems derived from natural growth patterns: branching, honeycomb, foam',
+      'Responsive facades that modulate based on environmental parameters',
+      'Fabrication through CNC cutting, 3D printing, robotic assembly',
+      'Gradients and differentiation across building surfaces without repetitive modules',
+      'Form emerging from constraint rather than being imposed upon it',
+    ],
+    palette:['#F0F0F0','#C8D0D8','#8A9AAA','#4A5A6A','#2A2A3A'],
+    paletteNames:['White render','Cool grey','Blue-grey','Dark slate','Night'],
+  },
+  {
+    id:'minimalism-arch', num:'18', name:'Architectural Minimalism', tagline:'Reduction as revelation', category:'contemporary',
+    description:'Architectural Minimalism pursues the liberation of space from visual noise — every element that can be removed, is. Tadao Ando works almost exclusively in raw concrete, achieving surfaces of meditative stillness through geometric precision. Peter Zumthor\'s Therme Vals bathhouse is composed of quartzite layers and silence. John Pawson reduces domestic architecture to light, material, and proportion alone. Minimalist architecture is not the absence of effort but its concealment: achieving spaciousness through rigorous constraint, where every joint, threshold, and material transition has been resolved to an invisible perfection.',
+    elements:[
+      'Single material palette carried throughout without interruption',
+      'Concealed structure: no exposed beams, columns, or services',
+      'Natural light as primary spatial event — rooflights, slot windows, light courts',
+      'Flush planes and invisible joinery: doors without handles, walls without skirting',
+      'Raw concrete, limestone, or teak with absolute material honesty',
+      'Proportion and silence as the only ornament',
+    ],
+    palette:['#F5F5F0','#E0DDD8','#B0ADA8','#6A6860','#3A3830'],
+    paletteNames:['White plaster','Pale stone','Warm grey','Dark grey','Shadow concrete'],
+  },
+
+  // ── CULTURAL ──
+  {
+    id:'japanese-traditional', num:'19', name:'Japanese Traditional', tagline:'Nature, impermanence, and the art of joining', category:'cultural',
+    description:'Japanese traditional architecture is among the most sophisticated timber construction traditions in the world — a system refined over fifteen centuries into a language of exceptional beauty, structural ingenuity, and philosophical depth. The Ise Grand Shrine, ritually demolished and rebuilt every twenty years, embodies the Shinto understanding that a building\'s value lies not in permanence but in the perfection of its making. The carpenter\'s joint, the engawa (veranda) as threshold between inside and outside, the borrowed view of a garden carefully composed — these principles influenced every significant Western architect who encountered them, from Wright to Mies.',
+    elements:[
+      'Post-and-beam timber structure with no load-bearing walls',
+      'Exposed timber joinery of extraordinary complexity, assembled without metal fasteners',
+      'Deeply overhanging hipped or gabled roofs of clay tile or thatched reed',
+      'Shoji screens: translucent rice paper on a light timber grid',
+      'Tatami module as the generator of plan proportions',
+      'Engawa (veranda) mediating between interior and garden',
+    ],
+    palette:['#8B6A3A','#C4A878','#4A6A3A','#2A3A2A','#8A8A8A'],
+    paletteNames:['Hinoki cypress','Rice paper','Moss green','Dark cedar','Clay tile'],
+  },
+  {
+    id:'islamic-moorish', num:'20', name:'Islamic / Moorish', tagline:'Geometry, light, and infinite pattern', category:'cultural',
+    description:'Islamic architecture is one of the world\'s great building traditions, spanning from the 7th century to the present across an enormous geographical range — from Andalusia to Central Asia, from Morocco to Indonesia. Its unifying characteristics are less about form than about surface: an obsession with geometric pattern (since figurative representation is avoided), with the transformation of harsh exterior light into filtered interior luminosity, and with the garden as a foretaste of paradise. The Alhambra in Granada represents its highest synthesis — a palace complex in which every surface is a mathematical meditation and water provides the acoustic ground of the whole experience.',
+    elements:[
+      'Geometric arabesques and interlacing star patterns in tile, plaster, and stone',
+      'Muqarnas: stalactite vaulting dissolving structural elements into crystalline form',
+      'Mashrabiya: turned-wood lattice screens filtering light and providing visual privacy',
+      'Horseshoe and multifoil arches as primary doorway and arcade forms',
+      'The central courtyard with fountain as the spatial and acoustic core',
+      'Calligraphic friezes integrating Quranic text as architectural ornament',
+    ],
+    palette:['#1A4A3A','#4A8A6A','#C8A040','#D4C060','#F5E8C0'],
+    paletteNames:['Emerald tile','Jade','Gold','Brass','Ivory plaster'],
+  },
+
+];
+
+// ─────────────────────────────────────────────
+// BUILD UI
+// ─────────────────────────────────────────────
+function buildCard(style) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.category = style.category;
+  card.dataset.id = style.id;
+
+  const images = IMAGE_MANIFEST[style.id] || [];
+
+  const thumbSlots = images.map((src, i) => `
+    <div class="thumb-slot${i===0?' active':''}" data-idx="${i}" id="thumb-${style.id}-${i}">
+      <img src="${src}" alt="${style.name} example ${i+1}" loading="lazy">
+    </div>`).join('') || '<div class="thumb-ph"></div>'.repeat(5);
+
+  const paletteSwatches = style.palette.map(c => `<div class="swatch" style="background:${c}" title="${c}"></div>`).join('');
+
+  card.innerHTML = `
+    <div class="card-header"></div>
+    <div class="gallery" id="gallery-${style.id}">
+      <div class="gallery-loading" id="loading-${style.id}"></div>
+      ${images[0] ? `<img class="gallery-main" id="main-${style.id}" src="${images[0]}" alt="${style.name}" loading="lazy">` : `<img class="gallery-main" id="main-${style.id}" src="" alt="${style.name}" data-loaded="false">`}
+      <div class="gallery-placeholder">
+        <span class="ph-icon">🏛</span>
+        <span class="ph-label">${style.name}</span>
+      </div>
+    </div>
+    <div class="gallery-thumbs" id="thumbs-${style.id}">${thumbSlots}</div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="category-badge">${CATEGORIES[style.category]}</span>
+        <span class="card-number">#${style.num}</span>
+      </div>
+      <h2>${style.name}</h2>
+      <p class="card-tagline">${style.tagline}</p>
+      <p class="card-description">${style.description}</p>
+      <p class="elements-title">Defining Elements</p>
+      <ul class="elements-list">
+        ${style.elements.map(e => `<li>${e}</li>`).join('')}
+      </ul>
+      <div class="palette">
+        ${paletteSwatches}
+        <span class="palette-names">${style.paletteNames.join(' · ')}</span>
+      </div>
+    </div>`;
+
+  // Gallery image load handling
+  const mainImg = card.querySelector('.gallery-main');
+  const loadingEl = card.querySelector('.gallery-loading');
+  if (images[0]) {
+    mainImg.addEventListener('load', () => { loadingEl.classList.add('done'); mainImg.dataset.loaded = 'true'; });
+    mainImg.addEventListener('error', () => { loadingEl.classList.add('done'); mainImg.dataset.loaded = 'false'; });
+    mainImg.addEventListener('click', () => openLightbox(images[0], style.name));
+  } else {
+    loadingEl.classList.add('done');
+  }
+
+  // Thumb clicks
+  card.querySelectorAll('.thumb-slot').forEach((slot, i) => {
+    slot.addEventListener('click', () => switchImage(style.id, i, images));
+  });
+
+  return card;
+}
+
+function switchImage(styleId, idx, images) {
+  const src = images[idx];
+  if (!src) return;
+  const mainImg = document.getElementById(`main-${styleId}`);
+  mainImg.classList.add('fading');
+  setTimeout(() => {
+    mainImg.src = src;
+    mainImg.dataset.loaded = 'loading';
+    mainImg.classList.remove('fading');
+    mainImg.addEventListener('load', () => { mainImg.dataset.loaded = 'true'; }, { once: true });
+  }, 180);
+  document.querySelectorAll(`#thumbs-${styleId} .thumb-slot`).forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+}
+
+// Lightbox
+function openLightbox(src, caption) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxCaption').textContent = caption;
+  document.getElementById('lightbox').classList.add('open');
+}
+document.getElementById('lightboxClose').addEventListener('click', () => {
+  document.getElementById('lightbox').classList.remove('open');
+});
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox')) document.getElementById('lightbox').classList.remove('open');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
+});
+
+// Filter
+const filterBar = document.getElementById('filterBar');
+const countBar  = document.getElementById('countBar');
+
+filterBar.addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filter = btn.dataset.filter;
+  let shown = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const hide = filter !== 'all' && card.dataset.category !== filter;
+    card.dataset.hidden = hide ? 'true' : 'false';
+    if (!hide) shown++;
+  });
+  countBar.textContent = filter === 'all'
+    ? `Showing all ${STYLES.length} styles`
+    : `Showing ${shown} ${CATEGORIES[filter]} style${shown !== 1 ? 's' : ''}`;
+});
+
+// Render
+const grid = document.getElementById('grid');
+STYLES.forEach(style => grid.appendChild(buildCard(style)));
+</script>
+</body>
+</html>

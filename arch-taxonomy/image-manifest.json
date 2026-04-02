@@ -1,0 +1,142 @@
+{
+  "greek-classical": [
+    "images/greek-classical/1.jpg",
+    "images/greek-classical/2.jpg",
+    "images/greek-classical/3.jpg",
+    "images/greek-classical/4.jpg",
+    "images/greek-classical/5.jpg"
+  ],
+  "romanesque": [
+    "images/romanesque/1.jpg",
+    "images/romanesque/2.jpg",
+    "images/romanesque/3.jpg",
+    "images/romanesque/4.jpg",
+    "images/romanesque/5.jpg"
+  ],
+  "gothic": [
+    "images/gothic/1.jpg",
+    "images/gothic/2.jpg",
+    "images/gothic/3.jpg",
+    "images/gothic/4.jpg",
+    "images/gothic/5.jpg"
+  ],
+  "renaissance": [
+    "images/renaissance/1.jpg",
+    "images/renaissance/2.jpg",
+    "images/renaissance/3.jpg",
+    "images/renaissance/4.jpg",
+    "images/renaissance/5.jpg"
+  ],
+  "baroque": [
+    "images/baroque/1.jpg",
+    "images/baroque/2.jpg",
+    "images/baroque/3.jpg",
+    "images/baroque/4.jpg",
+    "images/baroque/5.jpg"
+  ],
+  "neoclassical": [
+    "images/neoclassical/1.jpg",
+    "images/neoclassical/2.jpg",
+    "images/neoclassical/3.jpg",
+    "images/neoclassical/4.jpg",
+    "images/neoclassical/5.jpg"
+  ],
+  "art-nouveau": [
+    "images/art-nouveau/1.jpg",
+    "images/art-nouveau/2.jpg",
+    "images/art-nouveau/3.jpg",
+    "images/art-nouveau/4.webp",
+    "images/art-nouveau/5.jpg"
+  ],
+  "art-deco": [
+    "images/art-deco/1.jpg",
+    "images/art-deco/2.jpg",
+    "images/art-deco/3.jpg",
+    "images/art-deco/4.jpg",
+    "images/art-deco/5.jpg"
+  ],
+  "bauhaus": [
+    "images/bauhaus/1.jpg",
+    "images/bauhaus/2.jpg",
+    "images/bauhaus/3.jpg",
+    "images/bauhaus/4.jpg",
+    "images/bauhaus/5.jpg"
+  ],
+  "international-style": [
+    "images/international-style/1.jpg",
+    "images/international-style/2.jpg",
+    "images/international-style/3.jpg",
+    "images/international-style/4.jpg",
+    "images/international-style/5.jpg"
+  ],
+  "brutalism": [
+    "images/brutalism/1.jpg",
+    "images/brutalism/2.jpg",
+    "images/brutalism/3.jpg",
+    "images/brutalism/4.jpg",
+    "images/brutalism/5.jpg"
+  ],
+  "organic-prairie": [
+    "images/organic-prairie/1.jpg",
+    "images/organic-prairie/2.jpg",
+    "images/organic-prairie/3.jpg",
+    "images/organic-prairie/4.jpg",
+    "images/organic-prairie/5.jpg"
+  ],
+  "mid-century-modern": [
+    "images/mid-century-modern/1.jpg",
+    "images/mid-century-modern/2.jpg",
+    "images/mid-century-modern/3.jpg",
+    "images/mid-century-modern/4.jpg",
+    "images/mid-century-modern/5.jpg"
+  ],
+  "high-tech": [
+    "images/high-tech/1.jpg",
+    "images/high-tech/2.jpg",
+    "images/high-tech/3.jpg",
+    "images/high-tech/4.jpg",
+    "images/high-tech/5.jpg"
+  ],
+  "postmodernism": [
+    "images/postmodernism/1.jpg",
+    "images/postmodernism/2.jpg",
+    "images/postmodernism/3.jpg",
+    "images/postmodernism/4.jpg",
+    "images/postmodernism/5.jpg"
+  ],
+  "deconstructivism": [
+    "images/deconstructivism/1.jpg",
+    "images/deconstructivism/2.jpg",
+    "images/deconstructivism/3.jpg",
+    "images/deconstructivism/4.jpg",
+    "images/deconstructivism/5.jpg"
+  ],
+  "parametric": [
+    "images/parametric/1.jpg",
+    "images/parametric/2.jpg",
+    "images/parametric/3.jpg",
+    "images/parametric/4.jpg",
+    "images/parametric/5.jpg"
+  ],
+  "minimalism-arch": [
+    "images/minimalism-arch/1.jpg",
+    "images/minimalism-arch/2.jpg",
+    "images/minimalism-arch/3.jpg",
+    "images/minimalism-arch/4.jpg",
+    "images/minimalism-arch/5.jpg"
+  ],
+  "japanese-traditional": [
+    "images/japanese-traditional/1.jpg",
+    "images/japanese-traditional/2.jpg",
+    "images/japanese-traditional/3.jpg",
+    "images/japanese-traditional/4.jpg",
+    "images/japanese-traditional/5.jpg"
+  ],
+  "islamic-moorish": [
+    "images/islamic-moorish/1.jpg",
+    "images/islamic-moorish/2.jpg",
+    "images/islamic-moorish/3.jpg",
+    "images/islamic-moorish/4.jpg",
+    "images/islamic-moorish/5.jpg"
+  ]
+}
