@@ -37,54 +37,6 @@
     .hero p { max-width: 560px; margin: 0 auto; color: #aaa; font-size: 1.05rem; }
     .hero-meta { margin-top: 24px; font-size: 12px; color: #555; letter-spacing: 0.05em; }
 
-    /* ── API KEY BANNER ── */
-    .api-banner {
-      background: #1a1a1a;
-      border-bottom: 1px solid #333;
-      padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .api-banner.has-key { background: #0d1f0d; border-color: #1a3a1a; }
-    .api-status {
-      font-size: 12px;
-      color: #888;
-      flex: 1;
-      min-width: 200px;
-    }
-    .api-status.ok { color: #5a9a5a; }
-    .api-key-input {
-      flex: 1;
-      min-width: 200px;
-      max-width: 360px;
-      padding: 7px 12px;
-      background: #2a2a2a;
-      border: 1px solid #444;
-      border-radius: 6px;
-      color: #f0f0f0;
-      font-size: 13px;
-      font-family: monospace;
-    }
-    .api-key-input::placeholder { color: #666; }
-    .api-key-input:focus { outline: none; border-color: #c8b89a; }
-    .api-btn {
-      padding: 7px 16px;
-      background: #c8b89a;
-      color: #111;
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .api-btn:hover { background: #ddd; }
-    .api-btn.clear { background: transparent; color: #888; border: 1px solid #444; }
-    .api-btn.clear:hover { color: #ccc; border-color: #666; }
-    .api-help { font-size: 11px; color: #555; }
-    .api-help a { color: #888; }
 
     /* ── FILTERS ── */
     .filter-bar {
@@ -204,7 +156,6 @@
     @media (max-width: 640px) {
       .grid { grid-template-columns: 1fr; padding: 12px 12px 60px; gap: 20px; }
       .hero { padding: 48px 20px 40px; }
-      .api-banner { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -214,17 +165,8 @@
   <p class="hero-eyebrow">A visual reference</p>
   <h1>Men's <em>Style</em> Taxonomy</h1>
   <p>Twenty distinct aesthetic territories in menswear — from strict formal codes to countercultural uniforms — with the key design signals that define each one.</p>
-  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 images each via Unsplash search &nbsp;·&nbsp; From black tie to gorpcore</p>
+  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 images each &nbsp;·&nbsp; From black tie to gorpcore</p>
 </header>
-
-<!-- API Key Banner -->
-<div class="api-banner" id="apiBanner">
-  <div class="api-status" id="apiStatus">📷 Add an Unsplash API key to load real fashion images</div>
-  <input class="api-key-input" id="apiKeyInput" type="password" placeholder="Paste your Unsplash Access Key…" autocomplete="off">
-  <button class="api-btn" id="apiSaveBtn">Load Images</button>
-  <button class="api-btn clear" id="apiClearBtn" style="display:none">Clear</button>
-  <div class="api-help">Free key at <a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a> — takes 30 seconds</div>
-</div>
 
 <nav class="filter-bar" id="filterBar">
   <button class="filter-btn active" data-filter="all">All&nbsp;(20)</button>
@@ -247,7 +189,7 @@
 </div>
 
 <footer>
-  <p>Images via <a href="https://unsplash.com" target="_blank">Unsplash</a> · Built with hopebot</p>
+  <p>Built with hopebot</p>
 </footer>
 
 <script>
@@ -581,55 +523,13 @@ const STYLES = [
 ];
 
 // ─────────────────────────────────────────────
-// UNSPLASH API
+// LOCAL IMAGE MANIFEST
 // ─────────────────────────────────────────────
-const LS_KEY = 'unsplash_access_key';
-let unsplashKey = localStorage.getItem(LS_KEY) || '';
-
-// Cache for API results: { query: [photoUrl, ...] }
-const imgCache = {};
-
-async function fetchUnsplashPhotos(query, count = 5) {
-  if (imgCache[query]) return imgCache[query];
-  if (!unsplashKey) return [];
-  try {
-    const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=portrait&client_id=${unsplashKey}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(res.status);
-    const data = await res.json();
-    const urls = data.results.map(p => ({
-      regular: p.urls.regular,
-      thumb: p.urls.thumb,
-      small: p.urls.small,
-      alt: p.alt_description || query,
-      credit: p.user.name,
-      link: p.links.html,
-    }));
-    imgCache[query] = urls;
-    return urls;
-  } catch (e) {
-    console.warn('Unsplash fetch failed for', query, e);
-    imgCache[query] = [];
-    return [];
-  }
-}
+const IMAGE_MANIFEST = {"black-tie":["images/black-tie/1.jpg","images/black-tie/2.jpg","images/black-tie/3.jpg","images/black-tie/4.jpg","images/black-tie/5.jpg"],"power-suit":["images/power-suit/1.jpg","images/power-suit/2.jpg","images/power-suit/3.jpg","images/power-suit/4.jpg","images/power-suit/5.jpg"],"ivy-league":["images/ivy-league/1.jpg","images/ivy-league/2.jpg","images/ivy-league/3.jpg","images/ivy-league/4.jpg","images/ivy-league/5.jpg"],"old-money":["images/old-money/1.jpg","images/old-money/2.jpg","images/old-money/3.jpg","images/old-money/4.jpg","images/old-money/5.jpg"],"dark-academia":["images/dark-academia/1.jpg","images/dark-academia/2.jpg","images/dark-academia/3.jpg","images/dark-academia/4.jpg","images/dark-academia/5.jpg"],"smart-casual":["images/smart-casual/1.jpg","images/smart-casual/2.jpg","images/smart-casual/3.jpg","images/smart-casual/4.jpg","images/smart-casual/5.jpg"],"normcore":["images/normcore/1.jpg","images/normcore/2.jpg","images/normcore/3.jpg","images/normcore/4.jpg","images/normcore/5.jpg"],"americana":["images/americana/1.jpg","images/americana/2.jpg","images/americana/3.jpg","images/americana/4.jpg","images/americana/5.jpg"],"streetwear":["images/streetwear/1.jpg","images/streetwear/2.jpg","images/streetwear/3.jpg","images/streetwear/4.jpg","images/streetwear/5.jpg"],"hip-hop":["images/hip-hop/1.jpg","images/hip-hop/2.jpg","images/hip-hop/3.jpg","images/hip-hop/4.jpg","images/hip-hop/5.jpg"],"punk-rock":["images/punk-rock/1.jpg","images/punk-rock/2.jpg","images/punk-rock/3.jpg","images/punk-rock/4.jpg","images/punk-rock/5.jpg"],"gothic":["images/gothic/1.jpg","images/gothic/2.jpg","images/gothic/3.jpg","images/gothic/4.jpg","images/gothic/5.jpg"],"gorpcore":["images/gorpcore/1.jpg","images/gorpcore/2.jpg","images/gorpcore/3.jpg","images/gorpcore/4.jpg","images/gorpcore/5.jpg"],"techwear":["images/techwear/1.jpg","images/techwear/2.jpg","images/techwear/3.jpg","images/techwear/4.jpg","images/techwear/5.jpg"],"military":["images/military/1.jpg","images/military/2.jpg","images/military/3.jpg","images/military/4.jpg","images/military/5.jpg"],"tropical":["images/tropical/1.jpg","images/tropical/2.jpg","images/tropical/3.jpg","images/tropical/4.jpg","images/tropical/5.jpg"],"nautical":["images/nautical/1.jpg","images/nautical/2.jpg","images/nautical/3.jpg","images/nautical/4.jpg","images/nautical/5.jpg"],"bohemian":["images/bohemian/1.jpg","images/bohemian/2.jpg","images/bohemian/3.jpg","images/bohemian/4.jpg","images/bohemian/5.jpg"],"grunge":["images/grunge/1.jpg","images/grunge/2.jpg","images/grunge/3.jpg","images/grunge/4.jpg","images/grunge/5.jpg"],"cottagecore":["images/cottagecore/1.jpg","images/cottagecore/2.jpg","images/cottagecore/3.jpg","images/cottagecore/4.jpg","images/cottagecore/5.jpg"]};
 
 // ─────────────────────────────────────────────
 // CARD BUILDING
 // ─────────────────────────────────────────────
-
-function buildPlaceholder(style) {
-  const icons = { formal:'🎩', smart:'👔', casual:'👕', subculture:'🔥', outdoor:'🏔️', leisure:'🌊', alternative:'🎸' };
-  const q = encodeURIComponent(style.imageQueries[0] + ' men fashion');
-  const href = `https://www.google.com/search?q=${q}&tbm=isch`;
-  return `
-    <a class="gallery-placeholder" href="${href}" target="_blank" rel="noopener">
-      <div class="ph-icon">${icons[style.category] || '👗'}</div>
-      <div class="ph-label">${style.name}</div>
-      <div class="ph-cta">🔍 Browse on Google Images</div>
-      <div class="ph-cta-sub">or add Unsplash key above for inline images</div>
-    </a>`;
-}
 
 function buildCard(style) {
   const card = document.createElement('article');
@@ -637,17 +537,16 @@ function buildCard(style) {
   card.dataset.category = style.category;
   card.id = 'card-' + style.id;
 
-  const thumbSlots = style.imageQueries.map((_, i) => `
+  const images = IMAGE_MANIFEST[style.id] || [];
+  const thumbSlots = images.map((src, i) => `
     <div class="thumb-slot${i===0?' active':''}" data-idx="${i}" id="thumb-${style.id}-${i}">
-      <div class="thumb-ph"></div>
+      <img src="${src}" alt="${style.name} example ${i+1}" loading="lazy">
     </div>`).join('');
 
   card.innerHTML = `
     <div class="card-header"></div>
     <div class="gallery" id="gallery-${style.id}">
-      <div class="gallery-loading" id="loading-${style.id}"></div>
-      <img class="gallery-main" id="main-${style.id}" data-loaded="false" src="" alt="${style.name} example">
-      ${buildPlaceholder(style)}
+      <img class="gallery-main" id="main-${style.id}" data-loaded="true" src="${images[0] || ''}" alt="${style.name} example">
     </div>
     <div class="gallery-thumbs" id="thumbs-${style.id}">${thumbSlots}</div>
     <div class="card-body">
@@ -668,83 +567,32 @@ function buildCard(style) {
       </div>
     </div>`;
 
+  // Wire up thumbnail clicks
+  const mainImg = card.querySelector(`#main-${style.id}`);
+  mainImg.addEventListener('click', () => openLightbox(images[0], style.name));
+  card.querySelectorAll('.thumb-slot').forEach((slot, i) => {
+    slot.addEventListener('click', () => switchImage(style.id, i, images));
+  });
+
   return card;
 }
 
-// Cache of loaded photos per style: { styleId: [ {regular, thumb, ...}, ... ] }
-const stylePhotos = {};
-
-async function loadStyleImages(style) {
-  if (!unsplashKey) return;
-
-  const photos = [];
-  // Fetch first query for 5 results, then supplement with others if needed
-  const results = await fetchUnsplashPhotos(style.imageQueries[0], 5);
-  photos.push(...results.slice(0, 5));
-
-  // Fill gaps from other queries
-  for (let qi = 1; qi < style.imageQueries.length && photos.length < 5; qi++) {
-    const extra = await fetchUnsplashPhotos(style.imageQueries[qi], 2);
-    photos.push(...extra.slice(0, 5 - photos.length));
-  }
-
-  if (photos.length === 0) return;
-  stylePhotos[style.id] = photos;
-
-  // Update main image
-  const mainImg = document.getElementById(`main-${style.id}`);
-  const loadingEl = document.getElementById(`loading-${style.id}`);
-  const placeholder = document.querySelector(`#gallery-${style.id} .gallery-placeholder`);
-
-  if (mainImg) {
-    mainImg.src = photos[0].regular;
-    mainImg.alt = photos[0].alt;
-    mainImg.dataset.loaded = 'loading';
-    mainImg.onload = () => {
-      mainImg.dataset.loaded = 'true';
-      if (loadingEl) loadingEl.classList.add('done');
-      if (placeholder) { placeholder.style.display = 'none'; placeholder.style.pointerEvents = 'none'; }
-    };
-    mainImg.onerror = () => {
-      mainImg.dataset.loaded = 'false';
-      if (loadingEl) loadingEl.classList.add('done');
-      if (placeholder) { placeholder.style.display = ''; placeholder.style.pointerEvents = ''; }
-    };
-    mainImg.addEventListener('click', () => openLightbox(photos[0].regular, style.name + ' — ' + (photos[0].credit || '')));
-  }
-
-  // Update thumbnails
-  photos.forEach((photo, i) => {
-    const slot = document.getElementById(`thumb-${style.id}-${i}`);
-    if (!slot) return;
-    slot.innerHTML = `<img src="${photo.thumb}" alt="${photo.alt}" loading="lazy">`;
-    slot.addEventListener('click', () => switchImage(style.id, i));
-  });
-}
-
-function switchImage(styleId, idx) {
-  const photos = stylePhotos[styleId];
-  if (!photos || !photos[idx]) return;
-  const photo = photos[idx];
+function switchImage(styleId, idx, images) {
+  const src = images[idx];
+  if (!src) return;
   const mainImg = document.getElementById(`main-${styleId}`);
-  const placeholder = document.querySelector(`#gallery-${styleId} .gallery-placeholder`);
   if (!mainImg) return;
 
   mainImg.classList.add('fading');
   setTimeout(() => {
-    mainImg.src = photo.regular;
-    mainImg.alt = photo.alt;
+    mainImg.src = src;
     mainImg.classList.remove('fading');
-    if (placeholder) placeholder.style.display = 'none';
+    mainImg.onclick = () => openLightbox(src, styleId);
   }, 180);
 
-  // Update thumbnail active state
   document.querySelectorAll(`#thumbs-${styleId} .thumb-slot`).forEach((s, i) => {
     s.classList.toggle('active', i === idx);
   });
-
-  // Update click to open lightbox
-  mainImg.onclick = () => openLightbox(photo.regular, styleId + ' — ' + (photo.credit || ''));
 }
 
 // ─────────────────────────────────────────────
@@ -755,70 +603,6 @@ function renderAll() {
   STYLES.forEach(style => grid.appendChild(buildCard(style)));
 }
 
-// ─────────────────────────────────────────────
-// LOAD IMAGES (lazy, in batches)
-// ─────────────────────────────────────────────
-function loadAllImages() {
-  if (!unsplashKey) return;
-  // Load in batches of 5 to avoid hammering the API
-  let i = 0;
-  function loadBatch() {
-    const batch = STYLES.slice(i, i + 5);
-    if (batch.length === 0) return;
-    batch.forEach(s => loadStyleImages(s));
-    i += 5;
-    setTimeout(loadBatch, 2000);
-  }
-  loadBatch();
-}
-
-// ─────────────────────────────────────────────
-// API KEY UI
-// ─────────────────────────────────────────────
-const apiKeyInput = document.getElementById('apiKeyInput');
-const apiSaveBtn  = document.getElementById('apiSaveBtn');
-const apiClearBtn = document.getElementById('apiClearBtn');
-const apiStatus   = document.getElementById('apiStatus');
-const apiBanner   = document.getElementById('apiBanner');
-
-function updateKeyUI() {
-  if (unsplashKey) {
-    apiStatus.textContent = '✓ Unsplash key loaded — images loading from API';
-    apiStatus.className = 'api-status ok';
-    apiKeyInput.value = unsplashKey.slice(0, 8) + '…';
-    apiClearBtn.style.display = 'inline-block';
-    apiBanner.classList.add('has-key');
-  } else {
-    apiStatus.textContent = '📷 Add a free Unsplash API key to load real fashion images';
-    apiStatus.className = 'api-status';
-    apiClearBtn.style.display = 'none';
-    apiBanner.classList.remove('has-key');
-  }
-}
-
-apiSaveBtn.addEventListener('click', () => {
-  const val = apiKeyInput.value.trim().replace(/….*/, '');
-  if (!val || val.length < 8) { apiStatus.textContent = '⚠ Please paste a valid Unsplash Access Key'; return; }
-  unsplashKey = val;
-  localStorage.setItem(LS_KEY, unsplashKey);
-  updateKeyUI();
-  loadAllImages();
-});
-
-apiClearBtn.addEventListener('click', () => {
-  unsplashKey = '';
-  localStorage.removeItem(LS_KEY);
-  apiKeyInput.value = '';
-  updateKeyUI();
-  // Reset all cards to placeholder state
-  document.querySelectorAll('.gallery-main').forEach(img => {
-    img.src = ''; img.dataset.loaded = 'false';
-  });
-  document.querySelectorAll('.gallery-loading').forEach(el => el.classList.remove('done'));
-  document.querySelectorAll('.gallery-placeholder').forEach(el => el.style.display = '');
-});
-
-apiKeyInput.addEventListener('keydown', e => { if (e.key === 'Enter') apiSaveBtn.click(); });
 
 // ─────────────────────────────────────────────
 // FILTER
@@ -852,7 +636,7 @@ const lightboxCaption = document.getElementById('lightboxCaption');
 
 function openLightbox(src, caption) {
   lightboxImg.src = src;
-  lightboxCaption.textContent = caption ? 'Photo: ' + caption + ' via Unsplash' : '';
+  lightboxCaption.textContent = caption || '';
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -866,8 +650,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
 // INIT
 // ─────────────────────────────────────────────
 renderAll();
-updateKeyUI();
-if (unsplashKey) loadAllImages();
 </script>
 </body>
 </html>

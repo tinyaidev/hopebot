@@ -1,0 +1,142 @@
+{
+  "black-tie": [
+    "images/black-tie/1.jpg",
+    "images/black-tie/2.jpg",
+    "images/black-tie/3.jpg",
+    "images/black-tie/4.jpg",
+    "images/black-tie/5.jpg"
+  ],
+  "power-suit": [
+    "images/power-suit/1.jpg",
+    "images/power-suit/2.jpg",
+    "images/power-suit/3.jpg",
+    "images/power-suit/4.jpg",
+    "images/power-suit/5.jpg"
+  ],
+  "ivy-league": [
+    "images/ivy-league/1.jpg",
+    "images/ivy-league/2.jpg",
+    "images/ivy-league/3.jpg",
+    "images/ivy-league/4.jpg",
+    "images/ivy-league/5.jpg"
+  ],
+  "old-money": [
+    "images/old-money/1.jpg",
+    "images/old-money/2.jpg",
+    "images/old-money/3.jpg",
+    "images/old-money/4.jpg",
+    "images/old-money/5.jpg"
+  ],
+  "dark-academia": [
+    "images/dark-academia/1.jpg",
+    "images/dark-academia/2.jpg",
+    "images/dark-academia/3.jpg",
+    "images/dark-academia/4.jpg",
+    "images/dark-academia/5.jpg"
+  ],
+  "smart-casual": [
+    "images/smart-casual/1.jpg",
+    "images/smart-casual/2.jpg",
+    "images/smart-casual/3.jpg",
+    "images/smart-casual/4.jpg",
+    "images/smart-casual/5.jpg"
+  ],
+  "normcore": [
+    "images/normcore/1.jpg",
+    "images/normcore/2.jpg",
+    "images/normcore/3.jpg",
+    "images/normcore/4.jpg",
+    "images/normcore/5.jpg"
+  ],
+  "americana": [
+    "images/americana/1.jpg",
+    "images/americana/2.jpg",
+    "images/americana/3.jpg",
+    "images/americana/4.jpg",
+    "images/americana/5.jpg"
+  ],
+  "streetwear": [
+    "images/streetwear/1.jpg",
+    "images/streetwear/2.jpg",
+    "images/streetwear/3.jpg",
+    "images/streetwear/4.jpg",
+    "images/streetwear/5.jpg"
+  ],
+  "hip-hop": [
+    "images/hip-hop/1.jpg",
+    "images/hip-hop/2.jpg",
+    "images/hip-hop/3.jpg",
+    "images/hip-hop/4.jpg",
+    "images/hip-hop/5.jpg"
+  ],
+  "punk-rock": [
+    "images/punk-rock/1.jpg",
+    "images/punk-rock/2.jpg",
+    "images/punk-rock/3.jpg",
+    "images/punk-rock/4.jpg",
+    "images/punk-rock/5.jpg"
+  ],
+  "gothic": [
+    "images/gothic/1.jpg",
+    "images/gothic/2.jpg",
+    "images/gothic/3.jpg",
+    "images/gothic/4.jpg",
+    "images/gothic/5.jpg"
+  ],
+  "gorpcore": [
+    "images/gorpcore/1.jpg",
+    "images/gorpcore/2.jpg",
+    "images/gorpcore/3.jpg",
+    "images/gorpcore/4.jpg",
+    "images/gorpcore/5.jpg"
+  ],
+  "techwear": [
+    "images/techwear/1.jpg",
+    "images/techwear/2.jpg",
+    "images/techwear/3.jpg",
+    "images/techwear/4.jpg",
+    "images/techwear/5.jpg"
+  ],
+  "military": [
+    "images/military/1.jpg",
+    "images/military/2.jpg",
+    "images/military/3.jpg",
+    "images/military/4.jpg",
+    "images/military/5.jpg"
+  ],
+  "tropical": [
+    "images/tropical/1.jpg",
+    "images/tropical/2.jpg",
+    "images/tropical/3.jpg",
+    "images/tropical/4.jpg",
+    "images/tropical/5.jpg"
+  ],
+  "nautical": [
+    "images/nautical/1.jpg",
+    "images/nautical/2.jpg",
+    "images/nautical/3.jpg",
+    "images/nautical/4.jpg",
+    "images/nautical/5.jpg"
+  ],
+  "bohemian": [
+    "images/bohemian/1.jpg",
+    "images/bohemian/2.jpg",
+    "images/bohemian/3.jpg",
+    "images/bohemian/4.jpg",
+    "images/bohemian/5.jpg"
+  ],
+  "grunge": [
+    "images/grunge/1.jpg",
+    "images/grunge/2.jpg",
+    "images/grunge/3.jpg",
+    "images/grunge/4.jpg",
+    "images/grunge/5.jpg"
+  ],
+  "cottagecore": [
+    "images/cottagecore/1.jpg",
+    "images/cottagecore/2.jpg",
+    "images/cottagecore/3.jpg",
+    "images/cottagecore/4.jpg",
+    "images/cottagecore/5.jpg"
+  ]
+}
