@@ -164,22 +164,22 @@
 <header class="hero">
   <p class="hero-eyebrow">A visual reference</p>
   <h1>Men's <em>Style</em> Taxonomy</h1>
-  <p>Twenty distinct aesthetic territories in menswear — from strict formal codes to countercultural uniforms — with the key design signals that define each one.</p>
-  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 images each &nbsp;·&nbsp; From black tie to gorpcore</p>
+  <p>Twenty-seven distinct aesthetic territories in menswear — from strict formal codes to countercultural uniforms — with the key design signals that define each one.</p>
+  <p class="hero-meta">27 styles &nbsp;·&nbsp; 5 images each &nbsp;·&nbsp; From black tie to avant-garde</p>
 </header>
 
 <nav class="filter-bar" id="filterBar">
-  <button class="filter-btn active" data-filter="all">All&nbsp;(20)</button>
+  <button class="filter-btn active" data-filter="all">All&nbsp;(27)</button>
   <button class="filter-btn" data-filter="formal">Formal&nbsp;(2)</button>
-  <button class="filter-btn" data-filter="smart">Smart&nbsp;Casual&nbsp;(3)</button>
-  <button class="filter-btn" data-filter="casual">Casual&nbsp;(3)</button>
-  <button class="filter-btn" data-filter="subculture">Subculture&nbsp;(4)</button>
+  <button class="filter-btn" data-filter="smart">Smart&nbsp;Casual&nbsp;(4)</button>
+  <button class="filter-btn" data-filter="casual">Casual&nbsp;(5)</button>
+  <button class="filter-btn" data-filter="subculture">Subculture&nbsp;(7)</button>
   <button class="filter-btn" data-filter="outdoor">Outdoor&nbsp;(3)</button>
   <button class="filter-btn" data-filter="leisure">Leisure&nbsp;(2)</button>
-  <button class="filter-btn" data-filter="alternative">Alternative&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="alternative">Alternative&nbsp;(4)</button>
 </nav>
 
-<div class="count-bar" id="countBar">Showing all 20 styles</div>
+<div class="count-bar" id="countBar">Showing all 27 styles</div>
 <main class="grid" id="grid"></main>
 
 <div class="lightbox" id="lightbox">
@@ -518,14 +518,119 @@ const STYLES = [
     ],
     palette:['#4A5C3A','#8B7355','#C4B49A','#E8D4B0','#6B3A2A'],
     paletteNames:['Moss green','Oak','Linen','Wheat','Chestnut'],
-    imageQueries:['cottagecore men fashion tweed waistcoat rustic natural','country style men linen corduroy cottage aesthetic','rural men fashion gingham shirt knitwear earthy','countryside men outfit tweed brogues pastoral','cottage rural fashion men natural wool linen'],
+    imageQueries:['cottagecore men fashion tweed waistcoat rustic natural','country style men linen corduroy cottage aesthetic','rural men fashion gingham shirt knitwear earthy','countryside men outfit tweed brogoes pastoral','cottage rural fashion men natural wool linen'],
+  },
+  {
+    id:'skatecore', num:'21', name:'Skatecore', tagline:'The parking lot as runway', category:'subculture',
+    description:'Skatecore is the authentic working-class cousin of streetwear — born in concrete parks, not hype drops. Where streetwear has drifted toward luxury adjacency, skate fashion stayed honest: genuinely worn-in pieces, functional silhouettes, heavy canvas, and a studied indifference to trends. The palette runs to washed-out denim, faded black, and concrete grey. The only logos that carry weight are the ones you earned by actually skating.',
+    elements:[
+      'Baggy jeans or Dickies work pants — wide leg, never skinny',
+      'Oversized graphic tee or long-sleeve in skate brand (Thrasher, Polar, Palace)',
+      'Vans Old Skool, Sk8-Hi, or pro-model skate shoe with visible wear',
+      'Worn-in hoodie or crewneck, often faded or slightly wrecked',
+      'Flannel shirt tied at the waist or worn open over a tee',
+      'Beanie or 5-panel cap; nothing pristine',
+    ],
+    palette:['#2C2C2C','#6B5A3A','#A89878','#D4D0C8','#8B3A3A'],
+    paletteNames:['Faded black','Worn tan','Concrete','Bleached','Rust red'],
+    imageQueries:['skatecore men fashion baggy jeans vans thrasher lookbook','skate style men street photo hoodie wide leg denim worn','skater men fashion palace polar grip tape aesthetic'],
+  },
+  {
+    id:'soccer-casual', num:'22', name:'Soccer Casual / Terrace', tagline:'The badge does the talking', category:'subculture',
+    description:'Soccer casual — or terrace culture — is Britain\'s most original fashion export: a working-class subcultural uniform built around expensive sportswear worn in deliberate defiance of replica kits. It emerged in the late 1970s as supporters returned from European away games with Continental brands no-one in England had seen. The rules are precise: no club colours, no football shirts, no visible allegiance. Quality sportswear, worn knowingly, signals belonging without declaration.',
+    elements:[
+      'Stone Island badge (often worn on inner lining or removable)',
+      'CP Company Goggle jacket or Metropolis jacket',
+      'Adidas Originals: Gazelle, Samba, or Spezial — clean or lightly worn',
+      'New Balance 991, 1500, or 2002R',
+      'Fred Perry laurel wreath polo or Lacoste polo',
+      'Slim or tapered chinos; Aquascutum or Burberry check scarf',
+    ],
+    palette:['#1A2744','#6B5A3A','#8B8070','#C8B89A','#6B2A2A'],
+    paletteNames:['Navy','Stone','Putty','Sand','Burgundy'],
+    imageQueries:['stone island men terrace casual fashion lookbook outfit','soccer casual men cp company british terrace style photo','terrace fashion men adidas originals fred perry casual outfit'],
+  },
+  {
+    id:'italian-sprezzatura', num:'23', name:'Italian Sprezzatura', tagline:'The art of looking effortlessly perfect', category:'smart',
+    description:'Sprezzatura — the Italian art of making the difficult look easy — is the animating principle of Neapolitan tailoring. The jacket is deconstructed: minimal padding, light canvas, worn with visible ease so it moves with the body rather than shaping it. Pocket squares tumble rather than fold. The collar is open, the lapels roll naturally to their own resting point. Nothing is buttoned too tightly. The goal is aristocratic nonchalance — dressed entirely by instinct, apparently without effort.',
+    elements:[
+      'Unstructured Neapolitan jacket in linen, fresco, or softly woven wool',
+      'Open-collar shirt — no tie, or one worn loosened with a casual knot',
+      'Trousers with a natural break, in lightweight wool or cotton',
+      'Suede loafers, unlined leather derbies, or driving shoes',
+      'Artfully dishevelled pocket square — never precisely folded',
+      'Tan, camel, or cream from head to toe: monochrome warmth',
+    ],
+    palette:['#F0E8D8','#C8B078','#9A7850','#6B5A3A','#3A2E20'],
+    paletteNames:['Cream linen','Camel','Tobacco','Tan','Umber'],
+    imageQueries:['italian sprezzatura men fashion neapolitan suit linen lookbook','sprezzatura men style deconstructed blazer pocket square editorial','italian menswear lookbook unstructured jacket open collar summer'],
+  },
+  {
+    id:'avant-garde', num:'24', name:'Avant-Garde / Conceptual', tagline:'Fashion as statement, not camouflage', category:'alternative',
+    description:'Avant-garde menswear treats clothing as a medium for ideas. Seams are exposed as design features. Cuts are asymmetric, challenging the body\'s expected symmetry. The silhouette is often elongated and dramatically proportioned — long, draped, layered — but always purposeful. The reference universe is Rick Owens, Yohji Yamamoto, and the Comme des Garçons catalogue. The palette is near-exclusively black or bone, because colour would distract from structure. Nothing here is accidental.',
+    elements:[
+      'Deconstructed or asymmetric jacket — exposed seams, raw or unfinished hems',
+      'Draped or oversized proportion: volume as statement',
+      'Elongated silhouette — longline coats, dropped hems, wide trousers',
+      'Black or bone white exclusively; occasionally dark burgundy or grey',
+      'Platform boots or shoes with an unusual sole or geometry',
+      'Quality pieces from: Rick Owens, Yohji, CdG, Julius, or Ann Demeulemeester',
+    ],
+    palette:['#0A0A0A','#1A1A1A','#2C2C2C','#E8E4DC','#4A3A30'],
+    paletteNames:['Black','Charcoal','Graphite','Bone','Raw canvas'],
+    imageQueries:['rick owens men fashion avant garde editorial dark outfit','avant garde menswear black draped asymmetric editorial lookbook','yohji yamamoto men fashion deconstructed black outfit editorial'],
+  },
+  {
+    id:'mod-sixties', num:'25', name:'Mod / Sixties Revival', tagline:'Carnaby Street never really left', category:'subculture',
+    description:'Mod style crystallised in early 1960s London — young, sharp, continental, and deliberately opposed to the stuffiness of post-war British fashion. The original Mods looked to Rome and Milan for their references: slim Italian-cut suits, narrow lapels, pointed shoes. The silhouette is unambiguously fitted throughout — nothing loose, nothing relaxed. Fred Perry and Ben Sherman are the uniform; a well-cut tonic suit in midnight blue or steel grey is the statement.',
+    elements:[
+      'Slim two- or three-button suit in tonic weave, mohair, or Prince of Wales check',
+      'Chelsea boots — pointed toe, Cuban heel — or desert boots',
+      'Fred Perry laurel wreath polo or Ben Sherman button-down Oxford',
+      'Slim knit tie or no tie; always a neat collar',
+      'Fishtail parka over the suit for travelling',
+      'Vespa or Lambretta as implied context',
+    ],
+    palette:['#1A2744','#3A3A3A','#F5F0E8','#8B2A2A','#3A5A3A'],
+    paletteNames:['Midnight blue','Charcoal','Cream','Burgundy','Forest'],
+    imageQueries:['mod style men 1960s slim suit chelsea boots lookbook','mod revival men fashion fred perry parka outfit street style','mod menswear british sixties tonic suit narrow lapel photo'],
+  },
+  {
+    id:'y2k-revival', num:'26', name:'Y2K Revival', tagline:'The millennium, viewed through fond hindsight', category:'casual',
+    description:'Y2K menswear is the early 2000s re-examined through hindsight affection: low-rise jeans, Von Dutch logomania, Diesel denim, chrome accents, velour tracksuits. The original era was exuberant and naive; the revival is self-aware about it — everything is a knowing reference. Streetwear brands now riff directly on it, and thrift stores are being picked clean for Fubu, Sean John, and Rocawear. The silhouette swings between very baggy and very fitted, sometimes within the same outfit.',
+    elements:[
+      'Low-rise jeans — bootcut flare or slim straight with visible boxers',
+      'Trucker hat in mesh-back, often with retro logo',
+      'Graphic tee from a 2000s brand: Diesel, Von Dutch, Fubu, Rocawear',
+      'Track jacket or velour hoodie in jewel tones',
+      'Chunky sneakers: Reebok Classic, FILA Disruptor, New Balance 574',
+      'Chrome or rhinestone hardware; chain necklace layered over tee',
+    ],
+    palette:['#3A3A8B','#8B3A8B','#C8C8E0','#E0D0A0','#C83A3A'],
+    paletteNames:['Electric blue','Purple','Silver-grey','Gold','Red'],
+    imageQueries:['y2k men fashion revival 2000s outfit low rise jeans lookbook','y2k mens style 2000s nostalgia tracksuit trucker hat photo','2000s revival men fashion streetwear aesthetic lookbook editorial'],
+  },
+  {
+    id:'athleisure', num:'27', name:'Athleisure / Sport Luxe', tagline:'Performance fabrics, zero performance required', category:'casual',
+    description:'Athleisure occupies the space between the gym and the café — technical fabrics worn outside technical contexts, elevated by quality and cut. At its upper register: Loro Piana\'s cashmere track jacket, Lululemon ABC trousers that pass as tailored. The reference sport is indoor — basketball, tennis, running — worn in urban environments where the activity itself is absent. Unlike gorpcore, there is no mountain implied. The palette is deliberate and restrained: matching sets in muted colourways, never the technicolour of actual sportswear.',
+    elements:[
+      'Premium tracksuit or matching jogger set (Lululemon, Represent, Reigning Champ)',
+      'Technical quarter-zip or clean hoodie in solid muted colour',
+      'Sleek trainers: On Running, New Balance Fresh Foam, Salomon XT-6',
+      'Slim-fit performance polo or base layer worn as top',
+      'Nothing with heavy branding; colour-matched throughout',
+      'Clean minimal watch or no accessories',
+    ],
+    palette:['#4A4A5A','#3A4A3A','#F0F0F0','#C8C0B8','#2A2A3A'],
+    paletteNames:['Slate','Olive','Off-white','Warm grey','Midnight'],
+    imageQueries:['athleisure men fashion sport luxe tracksuit clean trainers lookbook','sport luxe men outfit premium joggers editorial fashion photo','men athletic casual lululemon joggers clean trainer outfit lookbook'],
   },
 ];
 
 // ─────────────────────────────────────────────
 // LOCAL IMAGE MANIFEST
 // ─────────────────────────────────────────────
-const IMAGE_MANIFEST = {"black-tie":["images/black-tie/1.jpg","images/black-tie/2.jpg","images/black-tie/3.jpg","images/black-tie/4.jpg","images/black-tie/5.jpg"],"power-suit":["images/power-suit/1.jpg","images/power-suit/2.jpg","images/power-suit/3.jpg","images/power-suit/4.jpg","images/power-suit/5.jpg"],"ivy-league":["images/ivy-league/1.jpg","images/ivy-league/2.jpg","images/ivy-league/3.jpg","images/ivy-league/4.jpg","images/ivy-league/5.jpg"],"old-money":["images/old-money/1.jpg","images/old-money/2.jpg","images/old-money/3.jpg","images/old-money/4.jpg","images/old-money/5.jpg"],"dark-academia":["images/dark-academia/1.jpg","images/dark-academia/2.jpg","images/dark-academia/3.jpg","images/dark-academia/4.jpg","images/dark-academia/5.jpg"],"smart-casual":["images/smart-casual/1.jpg","images/smart-casual/2.jpg","images/smart-casual/3.jpg","images/smart-casual/4.jpg","images/smart-casual/5.jpg"],"normcore":["images/normcore/1.jpg","images/normcore/2.jpg","images/normcore/3.jpg","images/normcore/4.jpg","images/normcore/5.jpg"],"americana":["images/americana/1.jpg","images/americana/2.jpg","images/americana/3.jpg","images/americana/4.jpg","images/americana/5.jpg"],"streetwear":["images/streetwear/1.jpg","images/streetwear/2.jpg","images/streetwear/3.jpg","images/streetwear/4.jpg","images/streetwear/5.jpg"],"hip-hop":["images/hip-hop/1.jpg","images/hip-hop/2.jpg","images/hip-hop/3.jpg","images/hip-hop/4.jpg","images/hip-hop/5.jpg"],"punk-rock":["images/punk-rock/1.jpg","images/punk-rock/2.jpg","images/punk-rock/3.jpg","images/punk-rock/4.jpg","images/punk-rock/5.jpg"],"gothic":["images/gothic/1.jpg","images/gothic/2.jpg","images/gothic/3.jpg","images/gothic/4.jpg","images/gothic/5.jpg"],"gorpcore":["images/gorpcore/1.jpg","images/gorpcore/2.jpg","images/gorpcore/3.jpg","images/gorpcore/4.jpg","images/gorpcore/5.jpg"],"techwear":["images/techwear/1.jpg","images/techwear/2.jpg","images/techwear/3.jpg","images/techwear/4.jpg","images/techwear/5.jpg"],"military":["images/military/1.jpg","images/military/2.jpg","images/military/3.jpg","images/military/4.jpg","images/military/5.jpg"],"tropical":["images/tropical/1.jpg","images/tropical/2.jpg","images/tropical/3.jpg","images/tropical/4.jpg","images/tropical/5.jpg"],"nautical":["images/nautical/1.jpg","images/nautical/2.jpg","images/nautical/3.jpg","images/nautical/4.jpg","images/nautical/5.jpg"],"bohemian":["images/bohemian/1.jpg","images/bohemian/2.jpg","images/bohemian/3.jpg","images/bohemian/4.jpg","images/bohemian/5.jpg"],"grunge":["images/grunge/1.jpg","images/grunge/2.jpg","images/grunge/3.jpg","images/grunge/4.jpg","images/grunge/5.jpg"],"cottagecore":["images/cottagecore/1.jpg","images/cottagecore/2.jpg","images/cottagecore/3.jpg","images/cottagecore/4.jpg","images/cottagecore/5.jpg"]};
+const IMAGE_MANIFEST = {"black-tie":["images/black-tie/1.jpg","images/black-tie/2.jpg","images/black-tie/3.jpg","images/black-tie/4.jpg","images/black-tie/5.jpg"],"power-suit":["images/power-suit/1.jpg","images/power-suit/2.jpg","images/power-suit/3.jpg","images/power-suit/4.jpg","images/power-suit/5.jpg"],"ivy-league":["images/ivy-league/1.jpg","images/ivy-league/2.jpg","images/ivy-league/3.jpg","images/ivy-league/4.jpg","images/ivy-league/5.jpg"],"old-money":["images/old-money/1.jpg","images/old-money/2.jpg","images/old-money/3.jpg","images/old-money/4.jpg","images/old-money/5.jpg"],"dark-academia":["images/dark-academia/1.jpg","images/dark-academia/2.jpg","images/dark-academia/3.jpg","images/dark-academia/4.jpg","images/dark-academia/5.jpg"],"smart-casual":["images/smart-casual/1.jpg","images/smart-casual/2.jpg","images/smart-casual/3.jpg","images/smart-casual/4.jpg","images/smart-casual/5.jpg"],"normcore":["images/normcore/1.jpg","images/normcore/2.jpg","images/normcore/3.jpg","images/normcore/4.jpg","images/normcore/5.jpg"],"americana":["images/americana/1.jpg","images/americana/2.jpg","images/americana/3.jpg","images/americana/4.jpg","images/americana/5.jpg"],"streetwear":["images/streetwear/1.jpg","images/streetwear/2.jpg","images/streetwear/3.jpg","images/streetwear/4.jpg","images/streetwear/5.jpg"],"hip-hop":["images/hip-hop/1.jpg","images/hip-hop/2.jpg","images/hip-hop/3.jpg","images/hip-hop/4.jpg","images/hip-hop/5.jpg"],"punk-rock":["images/punk-rock/1.jpg","images/punk-rock/2.jpg","images/punk-rock/3.jpg","images/punk-rock/4.jpg","images/punk-rock/5.jpg"],"gothic":["images/gothic/1.jpg","images/gothic/2.jpg","images/gothic/3.jpg","images/gothic/4.jpg","images/gothic/5.jpg"],"gorpcore":["images/gorpcore/1.jpg","images/gorpcore/2.jpg","images/gorpcore/3.jpg","images/gorpcore/4.jpg","images/gorpcore/5.jpg"],"techwear":["images/techwear/1.jpg","images/techwear/2.jpg","images/techwear/3.jpg","images/techwear/4.jpg","images/techwear/5.jpg"],"military":["images/military/1.jpg","images/military/2.jpg","images/military/3.jpg","images/military/4.jpg","images/military/5.jpg"],"tropical":["images/tropical/1.jpg","images/tropical/2.jpg","images/tropical/3.jpg","images/tropical/4.jpg","images/tropical/5.jpg"],"nautical":["images/nautical/1.jpg","images/nautical/2.jpg","images/nautical/3.jpg","images/nautical/4.jpg","images/nautical/5.jpg"],"bohemian":["images/bohemian/1.jpg","images/bohemian/2.jpg","images/bohemian/3.jpg","images/bohemian/4.jpg","images/bohemian/5.jpg"],"grunge":["images/grunge/1.jpg","images/grunge/2.jpg","images/grunge/3.jpg","images/grunge/4.jpg","images/grunge/5.jpg"],"cottagecore":["images/cottagecore/1.jpg","images/cottagecore/2.jpg","images/cottagecore/3.jpg","images/cottagecore/4.jpg","images/cottagecore/5.jpg"],"skatecore":["images/skatecore/1.jpg","images/skatecore/2.jpg","images/skatecore/3.jpg","images/skatecore/4.jpg","images/skatecore/5.jpg"],"soccer-casual":["images/soccer-casual/1.jpg","images/soccer-casual/2.jpg","images/soccer-casual/3.jpg","images/soccer-casual/4.jpg","images/soccer-casual/5.jpg"],"italian-sprezzatura":["images/italian-sprezzatura/1.jpg","images/italian-sprezzatura/2.jpg","images/italian-sprezzatura/3.jpg","images/italian-sprezzatura/4.jpg","images/italian-sprezzatura/5.jpg"],"avant-garde":["images/avant-garde/1.jpg","images/avant-garde/2.jpg","images/avant-garde/3.jpg","images/avant-garde/4.jpg","images/avant-garde/5.jpg"],"mod-sixties":["images/mod-sixties/1.jpg","images/mod-sixties/2.jpg","images/mod-sixties/3.jpg","images/mod-sixties/4.jpg","images/mod-sixties/5.jpg"],"y2k-revival":["images/y2k-revival/1.jpg","images/y2k-revival/2.jpg","images/y2k-revival/3.jpg","images/y2k-revival/4.jpg","images/y2k-revival/5.jpg"],"athleisure":["images/athleisure/1.jpg","images/athleisure/2.jpg","images/athleisure/3.jpg","images/athleisure/4.jpg","images/athleisure/5.jpg"]};
 
 // ─────────────────────────────────────────────
 // CARD BUILDING

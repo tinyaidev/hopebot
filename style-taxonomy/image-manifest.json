@@ -138,5 +138,54 @@
     "images/cottagecore/3.jpg",
     "images/cottagecore/4.jpg",
     "images/cottagecore/5.jpg"
+  ],
+  "skatecore": [
+    "images/skatecore/1.jpg",
+    "images/skatecore/2.jpg",
+    "images/skatecore/3.jpg",
+    "images/skatecore/4.jpg",
+    "images/skatecore/5.jpg"
+  ],
+  "soccer-casual": [
+    "images/soccer-casual/1.jpg",
+    "images/soccer-casual/2.jpg",
+    "images/soccer-casual/3.jpg",
+    "images/soccer-casual/4.jpg",
+    "images/soccer-casual/5.jpg"
+  ],
+  "italian-sprezzatura": [
+    "images/italian-sprezzatura/1.jpg",
+    "images/italian-sprezzatura/2.jpg",
+    "images/italian-sprezzatura/3.jpg",
+    "images/italian-sprezzatura/4.jpg",
+    "images/italian-sprezzatura/5.jpg"
+  ],
+  "avant-garde": [
+    "images/avant-garde/1.jpg",
+    "images/avant-garde/2.jpg",
+    "images/avant-garde/3.jpg",
+    "images/avant-garde/4.jpg",
+    "images/avant-garde/5.jpg"
+  ],
+  "mod-sixties": [
+    "images/mod-sixties/1.jpg",
+    "images/mod-sixties/2.jpg",
+    "images/mod-sixties/3.jpg",
+    "images/mod-sixties/4.jpg",
+    "images/mod-sixties/5.jpg"
+  ],
+  "y2k-revival": [
+    "images/y2k-revival/1.jpg",
+    "images/y2k-revival/2.jpg",
+    "images/y2k-revival/3.jpg",
+    "images/y2k-revival/4.jpg",
+    "images/y2k-revival/5.jpg"
+  ],
+  "athleisure": [
+    "images/athleisure/1.jpg",
+    "images/athleisure/2.jpg",
+    "images/athleisure/3.jpg",
+    "images/athleisure/4.jpg",
+    "images/athleisure/5.jpg"
   ]
 }
