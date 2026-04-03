@@ -17,13 +17,17 @@
       --shadow-hover: 0 8px 32px rgba(0,0,0,0.13);
       --radius: 12px;
       --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      --ancient:      #5C3A1A;
-      --classical:    #4A1A2E;
-      --arts-era:     #2A4A2E;
-      --modernist:    #1A2E4A;
-      --late-modern:  #1A3A3A;
-      --contemporary: #2A2A3A;
-      --cultural:     #4A2A1A;
+      --ancient:         #5C3A1A;
+      --medieval:        #3A2A5C;
+      --classical:       #4A1A2E;
+      --revival:         #1A3A1A;
+      --arts-era:        #2A4A2E;
+      --vernacular:      #5C4A1A;
+      --modernist:       #1A2E4A;
+      --regional-modern: #1A4A3A;
+      --late-modern:     #1A3A3A;
+      --contemporary:    #2A2A3A;
+      --cultural:        #4A2A1A;
     }
 
     html { scroll-behavior: smooth; }
@@ -67,13 +71,17 @@
     .card[data-hidden="true"] { display: none; }
 
     .card-header { height: 4px; }
-    .card[data-category="ancient"]      .card-header { background: var(--ancient); }
-    .card[data-category="classical"]    .card-header { background: var(--classical); }
-    .card[data-category="arts-era"]     .card-header { background: var(--arts-era); }
-    .card[data-category="modernist"]    .card-header { background: var(--modernist); }
-    .card[data-category="late-modern"]  .card-header { background: var(--late-modern); }
-    .card[data-category="contemporary"] .card-header { background: var(--contemporary); }
-    .card[data-category="cultural"]     .card-header { background: var(--cultural); }
+    .card[data-category="ancient"]         .card-header { background: var(--ancient); }
+    .card[data-category="medieval"]        .card-header { background: var(--medieval); }
+    .card[data-category="classical"]       .card-header { background: var(--classical); }
+    .card[data-category="revival"]         .card-header { background: var(--revival); }
+    .card[data-category="arts-era"]        .card-header { background: var(--arts-era); }
+    .card[data-category="vernacular"]      .card-header { background: var(--vernacular); }
+    .card[data-category="modernist"]       .card-header { background: var(--modernist); }
+    .card[data-category="regional-modern"] .card-header { background: var(--regional-modern); }
+    .card[data-category="late-modern"]     .card-header { background: var(--late-modern); }
+    .card[data-category="contemporary"]    .card-header { background: var(--contemporary); }
+    .card[data-category="cultural"]        .card-header { background: var(--cultural); }
 
     /* ── GALLERY ── */
     .gallery { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #111; cursor: pointer; }
@@ -90,8 +98,7 @@
     }
     .gallery-placeholder .ph-icon { font-size: 32px; opacity: 0.5; }
     .gallery-placeholder .ph-label { font-size: 14px; font-weight: 600; color: #aaa; letter-spacing: 0.04em; }
-    .gallery-main[data-loaded="false"] + .gallery-placeholder,
-    .gallery-main[data-loaded="hidden"] { display: none; }
+    .gallery-main:not([data-loaded="false"]) + .gallery-placeholder { display: none; }
     .gallery-main[data-loaded="false"] { display: none; }
 
     .gallery-loading { position: absolute; inset: 0; background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
@@ -112,13 +119,17 @@
       font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
       padding: 3px 9px; border-radius: 20px; color: #fff;
     }
-    .card[data-category="ancient"]      .category-badge { background: var(--ancient); }
-    .card[data-category="classical"]    .category-badge { background: var(--classical); }
-    .card[data-category="arts-era"]     .category-badge { background: var(--arts-era); }
-    .card[data-category="modernist"]    .category-badge { background: var(--modernist); }
-    .card[data-category="late-modern"]  .category-badge { background: var(--late-modern); }
-    .card[data-category="contemporary"] .category-badge { background: var(--contemporary); }
-    .card[data-category="cultural"]     .category-badge { background: var(--cultural); }
+    .card[data-category="ancient"]         .category-badge { background: var(--ancient); }
+    .card[data-category="medieval"]        .category-badge { background: var(--medieval); }
+    .card[data-category="classical"]       .category-badge { background: var(--classical); }
+    .card[data-category="revival"]         .category-badge { background: var(--revival); }
+    .card[data-category="arts-era"]        .category-badge { background: var(--arts-era); }
+    .card[data-category="vernacular"]      .category-badge { background: var(--vernacular); }
+    .card[data-category="modernist"]       .category-badge { background: var(--modernist); }
+    .card[data-category="regional-modern"] .category-badge { background: var(--regional-modern); }
+    .card[data-category="late-modern"]     .category-badge { background: var(--late-modern); }
+    .card[data-category="contemporary"]    .category-badge { background: var(--contemporary); }
+    .card[data-category="cultural"]        .category-badge { background: var(--cultural); }
     .card-number { font-size: 11px; color: #bbb; font-weight: 500; }
     .card h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
     .card-tagline { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 14px; }
@@ -154,22 +165,26 @@
 <header class="hero">
   <p class="hero-eyebrow">A visual reference</p>
   <h1>Architectural <em>Styles</em> Taxonomy</h1>
-  <p>Twenty distinct architectural movements — from ancient Greek temples to parametric computation — with the defining structural principles and visual signals of each.</p>
-  <p class="hero-meta">20 styles &nbsp;·&nbsp; 5 images each &nbsp;·&nbsp; From antiquity to the present</p>
+  <p>Thirty-one distinct architectural movements — from ancient Greek temples to parametric computation — with the defining structural principles and visual signals of each.</p>
+  <p class="hero-meta">31 styles &nbsp;·&nbsp; 5 images each &nbsp;·&nbsp; From antiquity to the present</p>
 </header>
 
 <nav class="filter-bar" id="filterBar">
-  <button class="filter-btn active" data-filter="all">All&nbsp;(20)</button>
+  <button class="filter-btn active" data-filter="all">All&nbsp;(31)</button>
   <button class="filter-btn" data-filter="ancient">Ancient&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="medieval">Medieval&nbsp;(1)</button>
   <button class="filter-btn" data-filter="classical">Classical&nbsp;(3)</button>
+  <button class="filter-btn" data-filter="revival">19th&nbsp;C.&nbsp;Revival&nbsp;(2)</button>
   <button class="filter-btn" data-filter="arts-era">Arts&nbsp;Era&nbsp;(2)</button>
+  <button class="filter-btn" data-filter="vernacular">Vernacular&nbsp;&amp;&nbsp;Colonial&nbsp;(3)</button>
   <button class="filter-btn" data-filter="modernist">Modernist&nbsp;(5)</button>
+  <button class="filter-btn" data-filter="regional-modern">Regional&nbsp;Modern&nbsp;(5)</button>
   <button class="filter-btn" data-filter="late-modern">Late&nbsp;Modern&nbsp;(3)</button>
   <button class="filter-btn" data-filter="contemporary">Contemporary&nbsp;(2)</button>
   <button class="filter-btn" data-filter="cultural">Cultural&nbsp;(2)</button>
 </nav>
 
-<div class="count-bar" id="countBar">Showing all 20 styles</div>
+<div class="count-bar" id="countBar">Showing all 31 styles</div>
 <main class="grid" id="grid"></main>
 
 <div class="lightbox" id="lightbox">
@@ -189,12 +204,14 @@
 // DATA
 // ─────────────────────────────────────────────
 const CATEGORIES = {
-  ancient:'Ancient', classical:'Classical', 'arts-era':'Arts Era',
-  modernist:'Modernist', 'late-modern':'Late Modern',
+  ancient:'Ancient', medieval:'Medieval', classical:'Classical',
+  revival:'19th C. Revival', 'arts-era':'Arts Era',
+  vernacular:'Vernacular & Colonial', modernist:'Modernist',
+  'regional-modern':'Regional Modern', 'late-modern':'Late Modern',
   contemporary:'Contemporary', cultural:'Cultural',
 };
 
-const IMAGE_MANIFEST = {"greek-classical":["images/greek-classical/1.jpg","images/greek-classical/2.jpg","images/greek-classical/3.jpg","images/greek-classical/4.jpg","images/greek-classical/5.jpg"],"romanesque":["images/romanesque/1.jpg","images/romanesque/2.jpg","images/romanesque/3.jpg","images/romanesque/4.jpg","images/romanesque/5.jpg"],"gothic":["images/gothic/1.jpg","images/gothic/2.jpg","images/gothic/3.jpg","images/gothic/4.jpg","images/gothic/5.jpg"],"renaissance":["images/renaissance/1.jpg","images/renaissance/2.jpg","images/renaissance/3.jpg","images/renaissance/4.jpg","images/renaissance/5.jpg"],"baroque":["images/baroque/1.jpg","images/baroque/2.jpg","images/baroque/3.jpg","images/baroque/4.jpg","images/baroque/5.jpg"],"neoclassical":["images/neoclassical/1.jpg","images/neoclassical/2.jpg","images/neoclassical/3.jpg","images/neoclassical/4.jpg","images/neoclassical/5.jpg"],"art-nouveau":["images/art-nouveau/1.jpg","images/art-nouveau/2.jpg","images/art-nouveau/3.jpg","images/art-nouveau/4.webp","images/art-nouveau/5.jpg"],"art-deco":["images/art-deco/1.jpg","images/art-deco/2.jpg","images/art-deco/3.jpg","images/art-deco/4.jpg","images/art-deco/5.jpg"],"bauhaus":["images/bauhaus/1.jpg","images/bauhaus/2.jpg","images/bauhaus/3.jpg","images/bauhaus/4.jpg","images/bauhaus/5.jpg"],"international-style":["images/international-style/1.jpg","images/international-style/2.jpg","images/international-style/3.jpg","images/international-style/4.jpg","images/international-style/5.jpg"],"brutalism":["images/brutalism/1.jpg","images/brutalism/2.jpg","images/brutalism/3.jpg","images/brutalism/4.jpg","images/brutalism/5.jpg"],"organic-prairie":["images/organic-prairie/1.jpg","images/organic-prairie/2.jpg","images/organic-prairie/3.jpg","images/organic-prairie/4.jpg","images/organic-prairie/5.jpg"],"mid-century-modern":["images/mid-century-modern/1.jpg","images/mid-century-modern/2.jpg","images/mid-century-modern/3.jpg","images/mid-century-modern/4.jpg","images/mid-century-modern/5.jpg"],"high-tech":["images/high-tech/1.jpg","images/high-tech/2.jpg","images/high-tech/3.jpg","images/high-tech/4.jpg","images/high-tech/5.jpg"],"postmodernism":["images/postmodernism/1.jpg","images/postmodernism/2.jpg","images/postmodernism/3.jpg","images/postmodernism/4.jpg","images/postmodernism/5.jpg"],"deconstructivism":["images/deconstructivism/1.jpg","images/deconstructivism/2.jpg","images/deconstructivism/3.jpg","images/deconstructivism/4.jpg","images/deconstructivism/5.jpg"],"parametric":["images/parametric/1.jpg","images/parametric/2.jpg","images/parametric/3.jpg","images/parametric/4.jpg","images/parametric/5.jpg"],"minimalism-arch":["images/minimalism-arch/1.jpg","images/minimalism-arch/2.jpg","images/minimalism-arch/3.jpg","images/minimalism-arch/4.jpg","images/minimalism-arch/5.jpg"],"japanese-traditional":["images/japanese-traditional/1.jpg","images/japanese-traditional/2.jpg","images/japanese-traditional/3.jpg","images/japanese-traditional/4.jpg","images/japanese-traditional/5.jpg"],"islamic-moorish":["images/islamic-moorish/1.jpg","images/islamic-moorish/2.jpg","images/islamic-moorish/3.jpg","images/islamic-moorish/4.jpg","images/islamic-moorish/5.jpg"]};
+const IMAGE_MANIFEST = {"greek-classical":["images/greek-classical/1.jpg","images/greek-classical/2.jpg","images/greek-classical/3.jpg","images/greek-classical/4.jpg","images/greek-classical/5.jpg"],"romanesque":["images/romanesque/1.jpg","images/romanesque/2.jpg","images/romanesque/3.jpg","images/romanesque/4.jpg","images/romanesque/5.jpg"],"gothic":["images/gothic/1.jpg","images/gothic/2.jpg","images/gothic/3.jpg","images/gothic/4.jpg","images/gothic/5.jpg"],"renaissance":["images/renaissance/1.jpg","images/renaissance/2.jpg","images/renaissance/3.jpg","images/renaissance/4.jpg","images/renaissance/5.jpg"],"baroque":["images/baroque/1.jpg","images/baroque/2.jpg","images/baroque/3.jpg","images/baroque/4.jpg","images/baroque/5.jpg"],"neoclassical":["images/neoclassical/1.jpg","images/neoclassical/2.jpg","images/neoclassical/3.jpg","images/neoclassical/4.jpg","images/neoclassical/5.jpg"],"art-nouveau":["images/art-nouveau/1.jpg","images/art-nouveau/2.jpg","images/art-nouveau/3.jpg","images/art-nouveau/4.webp","images/art-nouveau/5.jpg"],"art-deco":["images/art-deco/1.jpg","images/art-deco/2.jpg","images/art-deco/3.jpg","images/art-deco/4.jpg","images/art-deco/5.jpg"],"bauhaus":["images/bauhaus/1.jpg","images/bauhaus/2.jpg","images/bauhaus/3.jpg","images/bauhaus/4.jpg","images/bauhaus/5.jpg"],"international-style":["images/international-style/1.jpg","images/international-style/2.jpg","images/international-style/3.jpg","images/international-style/4.jpg","images/international-style/5.jpg"],"brutalism":["images/brutalism/1.jpg","images/brutalism/2.jpg","images/brutalism/3.jpg","images/brutalism/4.jpg","images/brutalism/5.jpg"],"organic-prairie":["images/organic-prairie/1.jpg","images/organic-prairie/2.jpg","images/organic-prairie/3.jpg","images/organic-prairie/4.jpg","images/organic-prairie/5.jpg"],"mid-century-modern":["images/mid-century-modern/1.jpg","images/mid-century-modern/2.jpg","images/mid-century-modern/3.jpg","images/mid-century-modern/4.jpg","images/mid-century-modern/5.jpg"],"high-tech":["images/high-tech/1.jpg","images/high-tech/2.jpg","images/high-tech/3.jpg","images/high-tech/4.jpg","images/high-tech/5.jpg"],"postmodernism":["images/postmodernism/1.jpg","images/postmodernism/2.jpg","images/postmodernism/3.jpg","images/postmodernism/4.jpg","images/postmodernism/5.jpg"],"deconstructivism":["images/deconstructivism/1.jpg","images/deconstructivism/2.jpg","images/deconstructivism/3.jpg","images/deconstructivism/4.jpg","images/deconstructivism/5.jpg"],"parametric":["images/parametric/1.jpg","images/parametric/2.jpg","images/parametric/3.jpg","images/parametric/4.jpg","images/parametric/5.jpg"],"minimalism-arch":["images/minimalism-arch/1.jpg","images/minimalism-arch/2.jpg","images/minimalism-arch/3.jpg","images/minimalism-arch/4.jpg","images/minimalism-arch/5.jpg"],"japanese-traditional":["images/japanese-traditional/1.jpg","images/japanese-traditional/2.jpg","images/japanese-traditional/3.jpg","images/japanese-traditional/4.jpg","images/japanese-traditional/5.jpg"],"islamic-moorish":["images/islamic-moorish/1.jpg","images/islamic-moorish/2.jpg","images/islamic-moorish/3.jpg","images/islamic-moorish/4.jpg","images/islamic-moorish/5.jpg"],"byzantine":["images/byzantine/1.jpg","images/byzantine/2.jpg","images/byzantine/3.jpg","images/byzantine/4.jpg","images/byzantine/5.jpg"],"gothic-revival":["images/gothic-revival/1.jpg","images/gothic-revival/2.jpg","images/gothic-revival/3.jpg","images/gothic-revival/4.jpg","images/gothic-revival/5.png"],"beaux-arts":["images/beaux-arts/1.jpg","images/beaux-arts/2.jpg","images/beaux-arts/3.jpg","images/beaux-arts/4.jpg","images/beaux-arts/5.png"],"french-renaissance":["images/french-renaissance/1.jpg","images/french-renaissance/2.jpg","images/french-renaissance/3.jpg","images/french-renaissance/4.jpg","images/french-renaissance/5.jpg"],"english-arts-crafts":["images/english-arts-crafts/1.jpg","images/english-arts-crafts/2.jpg","images/english-arts-crafts/3.jpg","images/english-arts-crafts/4.jpg","images/english-arts-crafts/5.jpg"],"spanish-colonial":["images/spanish-colonial/1.jpg","images/spanish-colonial/2.jpg","images/spanish-colonial/3.jpg","images/spanish-colonial/4.jpg","images/spanish-colonial/5.jpg"],"chicago-school":["images/chicago-school/1.jpg","images/chicago-school/2.jpg","images/chicago-school/3.jpg","images/chicago-school/4.jpg","images/chicago-school/5.jpg"],"german-expressionism":["images/german-expressionism/1.jpg","images/german-expressionism/2.jpg","images/german-expressionism/3.jpg","images/german-expressionism/4.jpg","images/german-expressionism/5.jpg"],"russian-constructivism":["images/russian-constructivism/1.jpg","images/russian-constructivism/2.jpg","images/russian-constructivism/3.jpg","images/russian-constructivism/4.jpg","images/russian-constructivism/5.jpg"],"nordic-modernism":["images/nordic-modernism/1.jpg","images/nordic-modernism/2.jpg","images/nordic-modernism/3.jpg","images/nordic-modernism/4.jpg","images/nordic-modernism/5.jpg"],"brazilian-modernism":["images/brazilian-modernism/1.jpg","images/brazilian-modernism/2.jpg","images/brazilian-modernism/3.jpg","images/brazilian-modernism/4.jpg","images/brazilian-modernism/5.jpg"]};
 
 const STYLES = [
 
@@ -492,6 +509,168 @@ const STYLES = [
     paletteNames:['Emerald tile','Jade','Gold','Brass','Ivory plaster'],
   },
 
+  // ── MEDIEVAL ──
+  {
+    id:'byzantine', num:'21', name:'Byzantine', tagline:'Divine light made material', category:'medieval',
+    description:'Byzantine architecture emerged from the fusion of Roman engineering and early Christian spirituality, reaching its apex in the 6th century under Justinian. Where Rome built to express earthly power, Byzantium built to dissolve it — enormous domes appear to float on halos of light, walls dematerialized through gold mosaic, and the vertical hierarchy of heaven given architectural form. The Hagia Sophia remained the largest enclosed space in the world for nearly a thousand years: an engineering feat so extraordinary that its builders reportedly attributed its structural mysteries to divine assistance.',
+    elements:[
+      'Central dome raised on pendentives — triangular curved surfaces transitioning from square base to circular drum',
+      'Mosaic-clad interiors in gold, blue, and red, covering walls, vaults, and domes',
+      'Centralized Greek-cross plan rather than the Roman longitudinal basilica',
+      'Clustered semi-domes surrounding the main dome, creating cascading spatial volumes',
+      'Thin marble veneer on walls, creating polychrome pattern without structural function',
+      'Narrow, deeply splayed window openings at drum level flooding the dome interior with light',
+    ],
+    palette:['#8B6914','#2A4A6A','#8B1A1A','#F0E0A0','#1A1A1A'],
+    paletteNames:['Gold mosaic','Imperial blue','Porphyry red','Ivory marble','Shadow'],
+  },
+
+  // ── 19TH CENTURY REVIVAL ──
+  {
+    id:'gothic-revival', num:'22', name:'Gothic Revival', tagline:'Medieval spirit reborn in Victorian stone', category:'revival',
+    description:'Gothic Revival emerged in 18th-century England as a romantic reaction against Neoclassical rationalism and became the dominant architectural language of the Victorian era. A.W.N. Pugin argued that Gothic was the only truly Christian architecture; John Ruskin saw in its craftsmanship a moral rebuke to industrial dehumanization. The result was an enormous body of work — churches, universities, parliaments, town halls — that often surpassed its medieval precedents in archaeological precision and sheer scale. The Houses of Parliament, begun in 1840, is its greatest monument: a building that looks medieval but is threaded with cast iron and heated by the most advanced mechanical systems of its age.',
+    elements:[
+      'Pointed arches deployed throughout: windows, doorways, arcades, and vaulting',
+      'Polychrome stonework and brick, inspired by Ruskin\'s study of Venetian Gothic',
+      'Elaborate tracery in windows, balustrades, and blind arcading',
+      'Steeply pitched roofs with decorative ridge tiles, crockets, and finials',
+      'Cast iron structure often concealed behind Gothic stone detailing',
+      'Archaeological accuracy in ornamental vocabulary — documented from medieval originals',
+    ],
+    palette:['#4A3A2A','#6A5A4A','#8A7A60','#C8B89A','#2A2A3A'],
+    paletteNames:['Dark stone','Limestone','Sandstone','Bath stone','Lead grey'],
+  },
+  {
+    id:'beaux-arts', num:'23', name:'Beaux-Arts', tagline:'The art of institutional grandeur', category:'revival',
+    description:'Beaux-Arts architecture — named for the École des Beaux-Arts in Paris, where generations of architects trained in rigorous classical composition — dominated civic, cultural, and commercial building in Europe and America from the 1870s through the 1920s. It synthesized all the classical traditions: Greek orders, Roman scale, Renaissance symmetry, Baroque drama. The result is architecture of extraordinary ambition and confidence: grand staircases meant to be descended, facades designed to announce institutional permanence, interiors organized around processional sequences of increasingly magnificent spaces. Grand Central Terminal, the Paris Opéra, and the Library of Congress are its canonical American monuments.',
+    elements:[
+      'Monumental scale with rusticated ground floors and a pronounced piano nobile above',
+      'Classical orders deployed at heroic size, often spanning multiple storeys',
+      'Arched windows, cartouches, swags, keystoned arches, and elaborate sculptural programs',
+      'Grand axial plans organized around processional sequences of spaces',
+      'Paired columns and elaborate entablatures on primary facades',
+      'Lavish use of marble, bronze, and polished stone; gilding throughout interiors',
+    ],
+    palette:['#F0EAD0','#D4C080','#8A7040','#4A3A20','#2A2A2A'],
+    paletteNames:['Limestone','Gilded stone','Bronze','Dark granite','Iron'],
+  },
+
+  // ── VERNACULAR & COLONIAL ──
+  {
+    id:'french-renaissance', num:'24', name:'French Renaissance / Châteaux', tagline:'Italian grace filtered through French ambition', category:'vernacular',
+    description:'French Renaissance architecture emerged in the late 15th century as French kings returned from Italian campaigns carrying new visual ideas across the Alps. The result was a captivating hybrid: Italian Renaissance orderliness and decorative vocabulary grafted onto late Gothic structural traditions and the French preference for dramatic rooflines. The great châteaux of the Loire Valley — Chambord, Chenonceau, Azay-le-Rideau — are unlike anything Italian: more romantic, more vertical, more preoccupied with the theatrical silhouette of towers and dormers against the sky. Chambord\'s roofscape, with its forest of chimneys and lantern towers, remains one of architecture\'s most extraordinary inventions.',
+    elements:[
+      'Steeply pitched hipped roofs with elaborate dormer windows breaking the roofline',
+      'Corner towers (tourelles), often corbelled and capped with conical slate roofs',
+      'Italian classical orders applied decoratively to essentially Gothic structures',
+      'Horizontal string courses emphasizing each floor level with precise regularity',
+      'Elaborate carved stone ornament: pilasters, friezes, sculptural dormers',
+      'Formal moats and reflecting water integrated as compositional elements',
+    ],
+    palette:['#D4C8A0','#A09060','#607040','#808080','#3A3A3A'],
+    paletteNames:['Cream limestone','Warm stone','Moss','Slate grey','Lead'],
+  },
+  {
+    id:'english-arts-crafts', num:'25', name:'English Arts & Crafts', tagline:'Honesty of material, honesty of making', category:'vernacular',
+    description:'The Arts & Crafts architectural movement, led by William Morris, Philip Webb, and later Edwin Lutyens, was a revolt against the industrial age and the thin historicism it produced. Where Victorian architects reached for Gothic or classical precedents as stylistic costumes, Arts & Crafts architects insisted that buildings should grow from their place, their materials, and their craft. The result is architecture of remarkable warmth and specificity: houses that use local stone or brick, show their timber honestly, relate sensitively to their gardens, and feel as though they have always been part of their particular landscape. Lutyens\'s great country houses represent the movement\'s mature expression — technically sophisticated, formally inventive, and deeply rooted.',
+    elements:[
+      'Vernacular materials used locally: hand-made brick, local stone, tile hanging, oak timber',
+      'Irregular, asymmetric massing that grows organically from the plan',
+      'Tall chimney stacks as prominent features, often clustered and elaborately detailed',
+      'Leaded casement windows with small panes; deep window seats inside',
+      'Strong integration with garden through terraces, pergolas, and hedged garden rooms',
+      'Visible joinery and craftsmanship — structural means displayed rather than concealed',
+    ],
+    palette:['#8B4A2A','#C4783A','#5A7A3A','#8B7A5A','#3A2A1A'],
+    paletteNames:['Hand brick','Warm terracotta','Garden green','Oak','Dark timber'],
+  },
+  {
+    id:'spanish-colonial', num:'26', name:'Spanish Colonial / Mission', tagline:'Mediterranean faith in the New World', category:'vernacular',
+    description:'Spanish Colonial architecture carried the Baroque forms of the Iberian peninsula across the Atlantic and into the Americas, where it adapted to radically different climates, materials, and indigenous building traditions. In California, New Mexico, and Texas, the Franciscan missions created a distinct regional vocabulary — adobe walls of extraordinary thickness, red clay tile roofs, arched arcades sheltering shaded corridors — expressing both the ambitions of the Church and the practical requirements of arid building. The Colonial Revival of the late 19th and early 20th centuries returned to these forms as regional identity, producing the Mission and Spanish Colonial Revival styles that still define much of the American Southwest and inform the California aesthetic to this day.',
+    elements:[
+      'Adobe or thick stucco walls (often 2–3 feet) providing thermal mass against heat extremes',
+      'Red clay barrel tile roofs with wide overhanging eaves casting deep shade',
+      'Arched arcades and loggias creating shaded outdoor circulation corridors',
+      'Bell towers (espadañas) with simple arched openings for hanging bells',
+      'Central courtyard (patio) as the organizational and social heart',
+      'Minimal ornament overall, concentrated at entry portals in elaborate carved stonework',
+    ],
+    palette:['#D4936A','#E8C89A','#8B4A1A','#4A6A4A','#F5F0E0'],
+    paletteNames:['Adobe','Warm stucco','Terracotta tile','Cactus green','Mission white'],
+  },
+
+  // ── REGIONAL MODERN ──
+  {
+    id:'chicago-school', num:'27', name:'Chicago School', tagline:'Form follows function — and commerce', category:'regional-modern',
+    description:'The Chicago School invented the modern skyscraper. Rising from the ashes of the 1871 Chicago Fire with new steel-frame technology, a generation of architects — Louis Sullivan, Daniel Burnham, John Root, William Holabird — developed a new building type whose form was determined by structure, program, and the economics of urban commercial land. Sullivan\'s dictum "form follows function" was the school\'s motto, though his own buildings showed that function alone was insufficient: his extraordinary terra-cotta ornament demonstrated that architecture must also be art. The Chicago window — a wide fixed central pane flanked by narrow operable sashes — became the school\'s signature device, flooding offices with natural light while expressing the steel frame behind.',
+    elements:[
+      'Steel or iron skeleton frame carrying all structural loads, liberating the facade from load-bearing function',
+      '"Chicago windows": wide fixed central glass flanked by narrow operable side sashes',
+      'Tripartite elevation: base (commercial ground floor), shaft (repetitive office floors), capital (decorated crown)',
+      'Terra-cotta cladding and ornament, often in Sullivan\'s elaborate organic patterns',
+      'Flat or minimally ornamented facades emphasizing the structural grid',
+      'Large floor plates maximizing rentable area around a central service core',
+    ],
+    palette:['#8B4A1A','#4A4A4A','#C4A878','#2A2A2A','#8A8A7A'],
+    paletteNames:['Terracotta','Steel grey','Stone','Iron black','Granite'],
+  },
+  {
+    id:'german-expressionism', num:'28', name:'German Expressionism', tagline:'Architecture as emotional force', category:'regional-modern',
+    description:'German Expressionism in architecture — flourishing from roughly 1910 to 1933 — refused both academic historicism and the cool rationalism of its Bauhaus contemporaries. Where Bauhaus pursued logical, reproducible, anonymous form, the Expressionists pursued the emotional, the individual, the sculptural. Erich Mendelsohn\'s Einstein Tower at Potsdam curves and bulges like something grown rather than built; Hans Poelzig\'s Grosses Schauspielhaus hung stalactite-like forms from its interior ceiling; Fritz Höger\'s Chilehaus shaped its corner into the prow of a ship. The movement ended with the rise of National Socialism, but its formal language of dynamic organic massing influenced the organic wing of late modernism and foreshadowed Deconstructivism.',
+    elements:[
+      'Dynamic, sculptural massing with curves, tapers, and expressive silhouettes',
+      'Brick used expressively — patterns, angles, corbeling — not merely as a cladding material',
+      'Emphasis on verticality through elongated towers and sharply pointed forms',
+      'Glass used in faceted, crystalline configurations in utopian visions of the Gläserne Kette',
+      'Organic, non-rectilinear forms suggesting geological growth or natural process',
+      'Ornament derived from abstracted natural, cosmic, or emotionally charged forms',
+    ],
+    palette:['#8B5A2A','#D4903A','#4A3A2A','#2A2A2A','#A09080'],
+    paletteNames:['Warm brick','Amber glass','Dark brick','Iron','Stone'],
+  },
+  {
+    id:'russian-constructivism', num:'29', name:'Russian Constructivism', tagline:'The revolution built in space', category:'regional-modern',
+    description:'Russian Constructivism was the architectural expression of the Bolshevik revolution — an attempt to create a genuinely new architecture for a genuinely new society. Emerging in the early 1920s under architects like Moisei Ginzburg, Konstantin Melnikov, and the Vesnin brothers, Constructivism rejected all ornament as bourgeois and pursued form derived purely from program, structure, and the dynamic expression of movement. Buildings were conceived as machines for living or working; their forms celebrated diagonal, cantilever, and industrial material. The movement was suppressed by Stalin in the early 1930s in favour of Socialist Realism, and most of its key buildings have been neglected or demolished since — making what survives doubly precious.',
+    elements:[
+      'Geometric, non-orthogonal compositions with diagonal and dynamic elements',
+      'Cantilevered volumes projecting dramatically without apparent support',
+      'Industrial materials: reinforced concrete, steel, glass used without decoration',
+      'Primary color accents (red, black) on white or grey concrete surfaces',
+      'Functional program explicitly expressed as exterior form — program is the aesthetic',
+      'No applied ornament; structure and circulation are the only visual language',
+    ],
+    palette:['#CC2222','#F0F0F0','#1A1A1A','#4A7AAA','#888888'],
+    paletteNames:['Revolution red','Concrete white','Iron','Steel blue','Ash'],
+  },
+  {
+    id:'nordic-modernism', num:'30', name:'Nordic Modernism', tagline:'Modernism with a human warmth', category:'regional-modern',
+    description:'Nordic or Scandinavian Modernism represents one of the most humane responses to the challenge of modern architecture. Where the International Style pursued universal, anonymous, climate-indifferent form, the Nordic masters — Alvar Aalto in Finland, Jørn Utzon in Denmark, Sigurd Lewerentz and Gunnar Asplund in Sweden — developed a modernism deeply rooted in natural materials, local landscape, and the specific quality of northern light. Aalto\'s architecture undulates, curves, and uses wood and brick alongside concrete; his buildings feel warm rather than clinical. The result is a regional modernism that influenced the humanist and Critical Regionalist strands of late-twentieth-century architecture worldwide and continues to define Nordic design culture.',
+    elements:[
+      'Natural materials (wood, brick, copper) integrated alongside concrete and glass',
+      'Sensitivity to daylight quality — rooflights, clerestories, and north light skylights',
+      'Organic, curvilinear plans that resist the orthogonal grid where program allows',
+      'Integration with landscape — buildings set into topography rather than imposed upon it',
+      'Warm detailing: wooden handrails, tiled surfaces, hand-crafted elements within a modern framework',
+      'Human scale maintained even in large buildings through spatial subdivision and material richness',
+    ],
+    palette:['#F0EAD8','#C8A86A','#6A8A6A','#4A6A8A','#2A2A2A'],
+    paletteNames:['Birch white','Pine','Forest green','Nordic sky','Iron'],
+  },
+  {
+    id:'brazilian-modernism', num:'31', name:'Brazilian Modernism', tagline:'Modernism reborn under the tropical sun', category:'regional-modern',
+    description:'Brazilian Modernism produced one of the most distinctive national architectures of the 20th century. Under the influence of Le Corbusier, who visited Brazil in 1936, a generation led by Oscar Niemeyer, Lúcio Costa, and later Paulo Mendes da Rocha developed a modernism that was anything but austere — sculptural, sensuous, and fully engaged with the tropical landscape. Where European modernism pursued the rational and the reproducible, Brazilian modernism pursued the poetic and the spectacular. Brasília, created from scratch in the late 1950s, is the movement\'s greatest monument: an entire capital city built on Corbusian planning principles and Niemeyer\'s extraordinary formal invention, declared a UNESCO World Heritage Site in 1987.',
+    elements:[
+      'Sculptural concrete forms — curves, hyperbolic paraboloids, and free-form shells',
+      'Pilotis (concrete stilts) lifting buildings above the tropical ground plane',
+      'Brise-soleil: external sun-screening systems of concrete, ceramic, or metal',
+      'Integration with tropical landscape: water, vegetation, and building as unified composition',
+      'White concrete or azulejo tile (blue-and-white Portuguese ceramic) as primary surface',
+      'Bold plastic form and spatial drama prioritized alongside functional requirements',
+    ],
+    palette:['#F0F0F0','#4A8AAA','#6A9A5A','#D4B060','#8B3A1A'],
+    paletteNames:['White concrete','Tropical sky','Lush green','Laterite gold','Terracotta'],
+  },
+
 ];
 
 // ─────────────────────────────────────────────
@@ -547,7 +726,7 @@ function buildCard(style) {
   if (images[0]) {
     mainImg.addEventListener('load', () => { loadingEl.classList.add('done'); mainImg.dataset.loaded = 'true'; });
     mainImg.addEventListener('error', () => { loadingEl.classList.add('done'); mainImg.dataset.loaded = 'false'; });
-    mainImg.addEventListener('click', () => openLightbox(images[0], style.name));
+    mainImg.addEventListener('click', () => openLightbox(mainImg.src, style.name));
   } else {
     loadingEl.classList.add('done');
   }

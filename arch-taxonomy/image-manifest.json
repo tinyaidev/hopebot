@@ -138,5 +138,82 @@
     "images/islamic-moorish/3.jpg",
     "images/islamic-moorish/4.jpg",
     "images/islamic-moorish/5.jpg"
+  ],
+  "byzantine": [
+    "images/byzantine/1.jpg",
+    "images/byzantine/2.jpg",
+    "images/byzantine/3.jpg",
+    "images/byzantine/4.jpg",
+    "images/byzantine/5.jpg"
+  ],
+  "gothic-revival": [
+    "images/gothic-revival/1.jpg",
+    "images/gothic-revival/2.jpg",
+    "images/gothic-revival/3.jpg",
+    "images/gothic-revival/4.jpg",
+    "images/gothic-revival/5.png"
+  ],
+  "beaux-arts": [
+    "images/beaux-arts/1.jpg",
+    "images/beaux-arts/2.jpg",
+    "images/beaux-arts/3.jpg",
+    "images/beaux-arts/4.jpg",
+    "images/beaux-arts/5.png"
+  ],
+  "french-renaissance": [
+    "images/french-renaissance/1.jpg",
+    "images/french-renaissance/2.jpg",
+    "images/french-renaissance/3.jpg",
+    "images/french-renaissance/4.jpg",
+    "images/french-renaissance/5.jpg"
+  ],
+  "english-arts-crafts": [
+    "images/english-arts-crafts/1.jpg",
+    "images/english-arts-crafts/2.jpg",
+    "images/english-arts-crafts/3.jpg",
+    "images/english-arts-crafts/4.jpg",
+    "images/english-arts-crafts/5.jpg"
+  ],
+  "spanish-colonial": [
+    "images/spanish-colonial/1.jpg",
+    "images/spanish-colonial/2.jpg",
+    "images/spanish-colonial/3.jpg",
+    "images/spanish-colonial/4.jpg",
+    "images/spanish-colonial/5.jpg"
+  ],
+  "chicago-school": [
+    "images/chicago-school/1.jpg",
+    "images/chicago-school/2.jpg",
+    "images/chicago-school/3.jpg",
+    "images/chicago-school/4.jpg",
+    "images/chicago-school/5.jpg"
+  ],
+  "german-expressionism": [
+    "images/german-expressionism/1.jpg",
+    "images/german-expressionism/2.jpg",
+    "images/german-expressionism/3.jpg",
+    "images/german-expressionism/4.jpg",
+    "images/german-expressionism/5.jpg"
+  ],
+  "russian-constructivism": [
+    "images/russian-constructivism/1.jpg",
+    "images/russian-constructivism/2.jpg",
+    "images/russian-constructivism/3.jpg",
+    "images/russian-constructivism/4.jpg",
+    "images/russian-constructivism/5.jpg"
+  ],
+  "nordic-modernism": [
+    "images/nordic-modernism/1.jpg",
+    "images/nordic-modernism/2.jpg",
+    "images/nordic-modernism/3.jpg",
+    "images/nordic-modernism/4.jpg",
+    "images/nordic-modernism/5.jpg"
+  ],
+  "brazilian-modernism": [
+    "images/brazilian-modernism/1.jpg",
+    "images/brazilian-modernism/2.jpg",
+    "images/brazilian-modernism/3.jpg",
+    "images/brazilian-modernism/4.jpg",
+    "images/brazilian-modernism/5.jpg"
   ]
 }
