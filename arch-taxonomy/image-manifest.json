@@ -45,7 +45,7 @@
     "images/art-nouveau/1.jpg",
     "images/art-nouveau/2.jpg",
     "images/art-nouveau/3.jpg",
-    "images/art-nouveau/4.webp",
+    "images/art-nouveau/4.jpg",
     "images/art-nouveau/5.jpg"
   ],
   "art-deco": [
@@ -70,10 +70,10 @@
     "images/international-style/5.jpg"
   ],
   "brutalism": [
-    "images/brutalism/1.jpg",
+    "images/brutalism/1.webp",
     "images/brutalism/2.jpg",
     "images/brutalism/3.jpg",
-    "images/brutalism/4.jpg",
+    "images/brutalism/4.webp",
     "images/brutalism/5.jpg"
   ],
   "organic-prairie": [
@@ -88,7 +88,7 @@
     "images/mid-century-modern/2.jpg",
     "images/mid-century-modern/3.jpg",
     "images/mid-century-modern/4.jpg",
-    "images/mid-century-modern/5.jpg"
+    "images/mid-century-modern/5.webp"
   ],
   "high-tech": [
     "images/high-tech/1.jpg",
@@ -151,20 +151,20 @@
     "images/gothic-revival/2.jpg",
     "images/gothic-revival/3.jpg",
     "images/gothic-revival/4.jpg",
-    "images/gothic-revival/5.png"
+    "images/gothic-revival/5.jpg"
   ],
   "beaux-arts": [
     "images/beaux-arts/1.jpg",
     "images/beaux-arts/2.jpg",
     "images/beaux-arts/3.jpg",
     "images/beaux-arts/4.jpg",
-    "images/beaux-arts/5.png"
+    "images/beaux-arts/5.jpg"
   ],
   "french-renaissance": [
     "images/french-renaissance/1.jpg",
     "images/french-renaissance/2.jpg",
     "images/french-renaissance/3.jpg",
-    "images/french-renaissance/4.jpg",
+    "images/french-renaissance/4.png",
     "images/french-renaissance/5.jpg"
   ],
   "english-arts-crafts": [
